@@ -1,0 +1,62 @@
+{
+  "nurse.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Nurse_administering_medicine_using_a_spoon_in_a_healthcare_setting_during_the_day.jpg",
+    "artist": "Shixart1985",
+    "license": "CC BY 2.0"
+  },
+  "doctor.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Doctor_examines_patient_with_stethoscope.jpg",
+    "artist": "Unknown photographer",
+    "license": "Public domain"
+  },
+  "carer.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Caregiver_administering_medicine_to_young_girl_during_a_home_health_check_on_a_sunny_afternoon.jpg",
+    "artist": "Shixart1985",
+    "license": "CC BY 2.0"
+  },
+  "vet.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:1Veterinary.jpg",
+    "artist": "Army Medicine",
+    "license": "CC BY 2.0"
+  },
+  "electrician.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Electrician_Mike_Hughes_Installing_Meter_Base.jpg",
+    "artist": "Team Massachusetts 4D Home",
+    "license": "CC BY 2.0"
+  },
+  "mechanic.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Auto_Mechanic_066.jpg",
+    "artist": "Amuzujoe",
+    "license": "CC BY-SA 4.0"
+  },
+  "developer.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Programmers.jpg",
+    "artist": "Lbronn",
+    "license": "CC BY-SA 4.0"
+  },
+  "physio.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Physical_therapy-_Run,_walk,_run_again_(6485518).jpg",
+    "artist": "U.S. Air Force photo by Senior Airman Jennifer Gonzales",
+    "license": "Public domain"
+  },
+  "chef.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Eighth_Army_Chef_of_the_Year_competition_(9182185).jpg",
+    "artist": "U.S. Army photo by Cpl. Hyung Ju Lee",
+    "license": "Public domain"
+  },
+  "teacher.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Chemistry_Tutor.jpg",
+    "artist": "Preply.com Images",
+    "license": "CC BY 2.0"
+  },
+  "engineer.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Medford,_93Fast14,_Construction_Inspector,_June_2011_(8491592497).jpg",
+    "artist": "MassDOT",
+    "license": "Public domain"
+  },
+  "scientist.jpg": {
+    "source": "https://commons.wikimedia.org/wiki/File:Lab_technitian_looking_through_the_microscope_while_adjusting_coarse_knob.jpg",
+    "artist": "Shixart1985",
+    "license": "CC BY 2.0"
+  }
+}

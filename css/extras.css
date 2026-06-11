@@ -381,3 +381,6 @@ html.has-fxbar .header { top: 30px; }
 .occx__herotext h3, .occx__cardname, .citypanel__tagline {
   text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6), 0 8px 22px rgba(0, 0, 0, 0.4);
 }
+
+/* trust band lives in the finale flex column now — pin it just above the footer */
+.finale .trust { order: 4; width: 100%; }

@@ -117,3 +117,21 @@
   }
   .sectors__map.is-drawn .smap__halo { animation: none; opacity: 0.4; }
 }
+
+/* ============ 3D interactive sector cards ============ */
+.sectors .cards { perspective: 1100px; }
+.sectors .card { position: relative; will-change: transform; }
+.sectors .card.is-tilt {
+  transition: none !important;                 /* live tilt is instant; reset eases back */
+  box-shadow: 0 36px 70px -30px rgba(20, 18, 16, 0.45),
+              0 12px 28px -18px rgba(201, 111, 46, 0.34);
+}
+/* a soft sheen that tracks the cursor across the card face */
+.card__glare {
+  position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  border-radius: inherit; opacity: 0;
+  transition: opacity 0.45s ease;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.12) 32%, rgba(255, 255, 255, 0) 56%);
+  mix-blend-mode: soft-light;
+}

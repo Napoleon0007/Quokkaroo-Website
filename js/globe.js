@@ -208,7 +208,7 @@ function init() {
   const moonTex = srgb('assets/img/moon/moon.jpg');
   // a real orbit keeps clear space between the two bodies — the Moon swings wide
   // of the framed Earth and is allowed to leave the frame on the high/low arcs
-  const MOON_R = 0.55, MOON_DIST = 8.2;
+  const MOON_R = 0.55, MOON_DIST = 7.0;
   const moon = new THREE.Mesh(
     new THREE.SphereGeometry(MOON_R, 64, 64),
     new THREE.MeshStandardMaterial({
