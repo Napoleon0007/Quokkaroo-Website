@@ -1,0 +1,125 @@
+/* Quokkaroo — cinematic 3D sector tiles.
+   Loaded LAST so it wins the cascade. Scoped to .sectors so nothing else moves.
+   Turns the flat photo grid into immersive image tiles: full-bleed photo, gradient
+   scrim, big ghost number, sector glyph badge, overlaid title, hover-revealed copy,
+   real perspective tilt + layered parallax + light sweep, and a 3D rise-in. */
+
+.sectors .cards { perspective: 1500px; gap: 18px; margin-top: 46px; }
+
+/* the tile itself — JS sets the live tilt transform */
+.sectors .card {
+  position: relative; aspect-ratio: 3 / 4;
+  display: flex; flex-direction: column; justify-content: flex-end;
+  padding: 24px 24px 26px;
+  border: none; border-radius: 20px; overflow: hidden;
+  background: #14110e; isolation: isolate;
+  box-shadow: 0 20px 44px -28px rgba(20, 18, 16, 0.55);
+  transition: box-shadow 0.5s ease;
+}
+.sectors .card.is-tilt {
+  transition: none;
+  box-shadow: 0 44px 80px -34px rgba(20, 18, 16, 0.6),
+              0 14px 30px -18px rgba(201, 111, 46, 0.4);
+}
+
+/* photo fills the whole tile, sits behind everything */
+.sectors .card__img {
+  position: absolute; inset: 0; z-index: 0;
+  margin: 0; height: 100%; aspect-ratio: auto; border-radius: 0;
+}
+.sectors .card__img img {
+  width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.06);
+  filter: saturate(0.82) brightness(0.9);
+  transition: transform 1s cubic-bezier(0.2, 0.6, 0.2, 1), filter 0.6s ease;
+}
+.sectors .card:hover .card__img img { transform: scale(1.13); filter: saturate(1.05) brightness(1); }
+
+/* gradient scrim so text always reads */
+.sectors .card__img::after {
+  content: ""; position: absolute; inset: 0; z-index: 1;
+  background: linear-gradient(to top,
+    rgba(13, 11, 9, 0.95) 0%, rgba(13, 11, 9, 0.74) 26%,
+    rgba(13, 11, 9, 0.20) 54%, rgba(13, 11, 9, 0) 76%);
+}
+
+/* cursor-tracking light sweep — above photo, below text */
+.card__glare {
+  position: absolute; inset: 0; z-index: 2; pointer-events: none;
+  opacity: 0; transition: opacity 0.45s ease;
+  background: radial-gradient(circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 240, 220, 0.28) 0%, rgba(255, 240, 220, 0.08) 30%, rgba(255, 240, 220, 0) 55%);
+}
+
+/* big ghost serif number, top-left */
+.sectors .card__num {
+  position: absolute; top: 14px; left: 22px; bottom: auto; z-index: 3;
+  font-family: var(--font-serif); font-weight: 300; letter-spacing: 0;
+  font-size: 50px; line-height: 1; color: rgba(255, 246, 236, 0.92);
+  text-shadow: 0 3px 16px rgba(0, 0, 0, 0.5); will-change: transform;
+}
+
+/* sector glyph badge, top-right (injected by JS) */
+.sectors .card__glyph {
+  position: absolute; top: 22px; right: 22px; z-index: 3;
+  width: 40px; height: 40px; display: grid; place-items: center;
+  border-radius: 50%; background: rgba(201, 111, 46, 0.18);
+  border: 1px solid rgba(255, 167, 94, 0.55);
+  -webkit-backdrop-filter: blur(4px); backdrop-filter: blur(4px);
+  will-change: transform; transition: background 0.4s ease, transform 0.5s ease;
+}
+.sectors .card:hover .card__glyph { background: rgba(201, 111, 46, 0.34); }
+.sectors .card__glyph svg {
+  width: 21px; height: 21px; fill: none; stroke: #ffc79b;
+  stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+}
+.sectors .card__glyph svg circle, .sectors .card__glyph svg ellipse { fill: #ffc79b; stroke: none; }
+
+/* title overlaid at the bottom */
+.sectors .card h3 {
+  position: relative; z-index: 3; margin: 0; color: var(--cream);
+  font-family: var(--font-serif); font-weight: 400;
+  font-size: clamp(20px, 1.9vw, 25px); line-height: 1.12;
+  text-shadow: 0 2px 14px rgba(0, 0, 0, 0.45);
+}
+
+/* description — clamped to a sliver at rest, opens on hover */
+.sectors .card p {
+  position: relative; z-index: 3; margin: 9px 0 0;
+  color: rgba(255, 246, 236, 0.82); font-size: 13.5px; line-height: 1.55;
+  max-height: 0; opacity: 0; overflow: hidden;
+  transform: translateY(6px);
+  transition: max-height 0.5s cubic-bezier(0.2, 0.7, 0.2, 1),
+              opacity 0.45s ease, transform 0.45s ease;
+}
+.sectors .card:hover p { max-height: 190px; opacity: 1; transform: translateY(0); }
+
+/* hairline ochre frame that lights up on hover */
+.sectors .card::after {
+  content: ""; position: absolute; inset: 0; z-index: 4; pointer-events: none;
+  border-radius: 20px; border: 1px solid rgba(255, 167, 94, 0);
+  transition: border-color 0.5s ease;
+}
+.sectors .card:hover::after { border-color: rgba(255, 167, 94, 0.45); }
+
+/* 3D rise-in on scroll (main.js toggles .is-in on .reveal) */
+.sectors .card.reveal {
+  opacity: 0; transform: perspective(1500px) translateY(46px) rotateX(-9deg);
+  transform-origin: 50% 100%;
+}
+.sectors .card.reveal.is-in {
+  opacity: 1; transform: none;
+  transition: opacity 0.7s ease, transform 0.85s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* touch / no-hover: keep copy visible, no clamp */
+@media (hover: none), (pointer: coarse) {
+  .sectors .card p { max-height: 200px; opacity: 1; transform: none; margin-top: 8px; }
+  .sectors .card__img img { filter: saturate(0.95); transform: scale(1.04); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sectors .card, .sectors .card__img img, .sectors .card p,
+  .sectors .card.reveal, .sectors .card__glyph { transition: none !important; }
+  .sectors .card.reveal { opacity: 1; transform: none; }
+}

@@ -149,21 +149,6 @@
 body.has-ctabar .qb { bottom: 76px; }
 body.has-ctabar .pc-fab { bottom: 136px; }
 
-/* ---------- puzzle preloader ---------- */
-.preloader__puzzle { width: 152px; height: auto; margin: 18px auto 6px; display: block; }
-.preloader__piece {
-  transform-box: fill-box; transform-origin: center;
-  animation: prePieceIn 2.1s cubic-bezier(0.3, 0.9, 0.3, 1.04) 0.15s both;
-}
-@keyframes prePieceIn {
-  0%   { transform: translate(-170px, -26px) rotate(-16deg); opacity: 0; }
-  12%  { opacity: 1; }
-  82%  { transform: translate(5px, 1px) rotate(1.2deg); }
-  100% { transform: translate(0, 0) rotate(0deg); }
-}
-.preloader__bar { opacity: 0.55; }
-@media (prefers-reduced-motion: reduce) { .preloader__piece { animation: none; } }
-
 /* ---------- WhatsApp contact (renders only when a number is configured) ---------- */
 .wa-fab {
   position: fixed; right: 22px; bottom: 158px; z-index: 79;
@@ -393,7 +378,7 @@ html.has-fxbar .header { top: 30px; }
   text-transform: none; letter-spacing: 0.02em;
   font-size: clamp(19px, 2.3vw, 31px); color: var(--ink-soft);
 }
-@media (max-width: 680px) { .hero__tagline { top: 120px; } }
+@media (max-width: 680px) { .hero__tagline { top: 172px; } }
 
 /* the letters breathe, they don't bounce (calmer override of `floaty`) */
 @keyframes floaty {

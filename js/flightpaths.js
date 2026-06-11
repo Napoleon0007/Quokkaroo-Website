@@ -39,19 +39,43 @@ wrap.appendChild(canvas);
 document.body.appendChild(wrap);
 const ctx = canvas.getContext('2d');
 
-let W = 0, H = 0, DPR = 1, mapLayer = null;
+let W = 0, H = 0, DPR = 1, mapLayer = null, portrait = false;
 let mapX = 0, mapY = 0, mapW = 0, mapH = 0;
+let auX = 0, auY = 0, auS = 0;     // portrait-only zoomed-Australia inset
+
+// portrait inset bounds: the whole of Australia incl. Tasmania, a little air
+const AU_LON0 = 109, AU_LON1 = 156, AU_LAT0 = -8, AU_LAT1 = -45.5;
 
 function project(lon, lat) {
   return [mapX + ((lon + 180) / 360) * mapW, mapY + ((90 - lat) / 180) * mapH];
 }
+function projectAU(lon, lat) {
+  return [auX + (lon - AU_LON0) * auS, auY + (AU_LAT0 - lat) * auS];
+}
+// where a flight LANDS: the world map on desktop, the big Australia on phones
+function projectDest(lon, lat) {
+  return portrait ? projectAU(lon, lat) : project(lon, lat);
+}
 
-// pre-render the dotted world once; redrawn only on resize
+// pre-render the dotted world once; redrawn only on resize.
+// Landscape: one proportional world map, centred.
+// Portrait: the world strip sits high (departures) and a large, proportional
+// Australia fills the lower half (arrivals) — the journey reads top → down.
 function buildMap() {
+  portrait = H > W * 1.15;
+
   mapW = W * 1.04;                 // tiny overscan so the seam sits offscreen
   mapH = mapW / 2;
   mapX = (W - mapW) / 2;
-  mapY = (H - mapH) / 2 - H * 0.02;
+  mapY = portrait ? H * 0.135 : (H - mapH) / 2 - H * 0.02;
+
+  if (portrait) {
+    auS = (W - 56) / (AU_LON1 - AU_LON0);
+    const auH = (AU_LAT0 - AU_LAT1) * auS;
+    auX = 28;
+    const stripBottom = mapY + mapH;
+    auY = stripBottom + Math.max(30, (H - stripBottom - auH) * 0.62);
+  }
 
   mapLayer = document.createElement('canvas');
   mapLayer.width = W * DPR;
@@ -60,9 +84,11 @@ function buildMap() {
   g.scale(DPR, DPR);
 
   // shading pass: oversized soft blobs merge into filled landmasses, so the
-  // continents read as shapes — the crisp dots then sit on top as texture
-  const inkShade = 'rgba(20, 18, 16, 0.05)';
-  const ochreShade = 'rgba(201, 111, 46, 0.10)';
+  // continents read as shapes — the crisp dots then sit on top as texture.
+  // On phones the strip is quieter (hero copy sits over it); the zoomed
+  // Australia below carries the weight instead.
+  const inkShade = portrait ? 'rgba(20, 18, 16, 0.035)' : 'rgba(20, 18, 16, 0.05)';
+  const ochreShade = portrait ? 'rgba(201, 111, 46, 0.07)' : 'rgba(201, 111, 46, 0.10)';
   for (let i = 0; i < LAND_DOTS.length; i += 2) {
     const lat = LAND_DOTS[i], lon = LAND_DOTS[i + 1];
     const [x, y] = project(lon, lat);
@@ -71,14 +97,33 @@ function buildMap() {
     g.fillRect(x - 1.4, y - 1.4, 4.5, 4.5);
   }
 
-  const ink = 'rgba(20, 18, 16, 0.20)';
-  const ochre = 'rgba(201, 111, 46, 0.55)';
+  const ink = portrait ? 'rgba(20, 18, 16, 0.13)' : 'rgba(20, 18, 16, 0.20)';
+  const ochre = portrait ? 'rgba(201, 111, 46, 0.35)' : 'rgba(201, 111, 46, 0.55)';
   for (let i = 0; i < LAND_DOTS.length; i += 2) {
     const lat = LAND_DOTS[i], lon = LAND_DOTS[i + 1];
     const [x, y] = project(lon, lat);
     if (y < -2 || y > H + 2) continue;
     g.fillStyle = inAustralia(lat, lon) ? ochre : ink;
     g.fillRect(x, y, 1.8, 1.8);
+  }
+
+  if (portrait) {
+    // the zoomed Australia: same two passes at FULL strength, larger dots —
+    // it is the destination and the star of the phone hero
+    for (let i = 0; i < LAND_DOTS.length; i += 2) {
+      const lat = LAND_DOTS[i], lon = LAND_DOTS[i + 1];
+      if (!inAustralia(lat, lon)) continue;
+      const [x, y] = projectAU(lon, lat);
+      g.fillStyle = 'rgba(201, 111, 46, 0.10)';
+      g.fillRect(x - 2.4, y - 2.4, 7.5, 7.5);
+    }
+    for (let i = 0; i < LAND_DOTS.length; i += 2) {
+      const lat = LAND_DOTS[i], lon = LAND_DOTS[i + 1];
+      if (!inAustralia(lat, lon)) continue;
+      const [x, y] = projectAU(lon, lat);
+      g.fillStyle = 'rgba(201, 111, 46, 0.55)';
+      g.fillRect(x, y, 2.6, 2.6);
+    }
   }
 }
 
@@ -91,9 +136,19 @@ const arcs = ORIGINS.map((o, i) => ({
 
 function arcPoint(a, t) {
   const [x1, y1] = project(a.from[0], a.from[1]);
-  const [x2, y2] = project(a.to[0], a.to[1]);
-  const mx = (x1 + x2) / 2;
-  const my = (y1 + y2) / 2 - Math.hypot(x2 - x1, y2 - y1) * 0.22;  // lift the midpoint
+  const [x2, y2] = projectDest(a.to[0], a.to[1]);
+  let mx = (x1 + x2) / 2;
+  let my = (y1 + y2) / 2;
+  const d = Math.hypot(x2 - x1, y2 - y1);
+  if (portrait) {
+    // flights dive down the screen — bow each arc sideways (alternating)
+    // so they fan out instead of stacking on one line
+    const side = (a.offset * 8) % 2 < 1 ? 1 : -1;
+    mx += ((y2 - y1) / (d || 1)) * d * 0.18 * side;
+    my -= ((x2 - x1) / (d || 1)) * d * 0.18 * side;
+  } else {
+    my -= d * 0.22;                                  // lift the midpoint
+  }
   const u = 1 - t;
   return [
     u * u * x1 + 2 * u * t * mx + t * t * x2,
@@ -131,16 +186,17 @@ function drawCities(t) {
     ctx.fillStyle = 'rgba(20, 18, 16, 0.45)';
     ctx.fill();
   }
+  const dr = portrait ? 3.6 : 2.6, pulse = portrait ? 16 : 11;
   for (let i = 0; i < DESTS.length; i++) {
-    const [x, y] = project(DESTS[i][0], DESTS[i][1]);
+    const [x, y] = projectDest(DESTS[i][0], DESTS[i][1]);
     ctx.beginPath();
-    ctx.arc(x, y, 2.6, 0, Math.PI * 2);
+    ctx.arc(x, y, dr, 0, Math.PI * 2);
     ctx.fillStyle = 'rgba(201, 111, 46, 0.85)';
     ctx.fill();
     // soft pulse ring inviting the eye to Australia
     const k = (t * 0.45 + i * 0.2) % 1;
     ctx.beginPath();
-    ctx.arc(x, y, 3 + k * 11, 0, Math.PI * 2);
+    ctx.arc(x, y, dr + 0.5 + k * pulse, 0, Math.PI * 2);
     ctx.strokeStyle = 'rgba(201, 111, 46, ' + (0.35 * (1 - k)).toFixed(3) + ')';
     ctx.lineWidth = 1;
     ctx.stroke();
@@ -194,7 +250,7 @@ resize();
 
 function render(t) {
   ctx.clearRect(0, 0, W, H);
-  drawContours(reduced ? 0 : t);
+  if (!portrait) drawContours(reduced ? 0 : t);   // phones: clean two-map story, less clutter + battery
   ctx.drawImage(mapLayer, 0, 0, W, H);
   for (const a of arcs) {
     if (reduced) {
