@@ -206,7 +206,9 @@ function init() {
   // --- the Moon: real lunar albedo, bump-shaded craters, lit by the same sun so
   //     its phase always matches Earth's. Orbits on its own inclined pivot. ---
   const moonTex = srgb('assets/img/moon/moon.jpg');
-  const MOON_R = 0.42, MOON_DIST = 4.1;
+  // a real orbit keeps clear space between the two bodies — the Moon swings wide
+  // of the framed Earth and is allowed to leave the frame on the high/low arcs
+  const MOON_R = 0.55, MOON_DIST = 8.2;
   const moon = new THREE.Mesh(
     new THREE.SphereGeometry(MOON_R, 64, 64),
     new THREE.MeshStandardMaterial({
@@ -498,8 +500,9 @@ function init() {
     stars.rotation.y += dt * 0.0025;
     starMat.uniforms.uTime.value = t;
 
-    // the Moon orbits Earth and keeps roughly one face turned toward it
-    const moonAng = t * 0.10;
+    // the Moon orbits Earth and keeps roughly one face turned toward it;
+    // slower angular rate so the wider orbit still glides, never whips
+    const moonAng = t * 0.055;
     moon.position.set(Math.cos(moonAng) * MOON_DIST, Math.sin(moonAng) * MOON_DIST, 0);
     moon.rotation.y = -moonAng + Math.PI;
 

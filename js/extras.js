@@ -156,7 +156,40 @@ function whatsappButton() {
   document.body.appendChild(a);
 }
 
+/* ---------- 7. live AUD exchange-rate bar (very top of the page) ---------- */
+function fxBar() {
+  if (document.querySelector('.fxbar')) return;
+  const bar = document.createElement('div');
+  bar.className = 'fxbar';
+  bar.setAttribute('aria-label', 'Australian dollar exchange rates');
+  document.body.appendChild(bar);
+  document.documentElement.classList.add('has-fxbar');
+
+  const SYM = { USD: '$', ZAR: 'R', GBP: '£', EUR: '€', INR: '₹' };
+  // indicative fallbacks so the bar never shows empty (overwritten by live ECB rates)
+  const FALLBACK = { USD: 0.66, ZAR: 11.9, GBP: 0.49, EUR: 0.57, INR: 55.2 };
+
+  function render(rates, live, date) {
+    const parts = Object.keys(SYM).map((c) => {
+      const v = rates[c];
+      if (v == null) return '';
+      const str = v >= 10 ? v.toFixed(1) : v.toFixed(2);
+      return '<span class="fxbar__item"><b>' + SYM[c] + str + '</b> ' + c + '</span>';
+    }).join('');
+    bar.innerHTML =
+      '<span class="fxbar__lead">A$1 =</span>' + parts +
+      '<span class="fxbar__src">' + (live ? 'ECB rates · ' + date : 'indicative') + '</span>';
+  }
+  render(FALLBACK, false);
+
+  fetch('https://api.frankfurter.app/latest?from=AUD&to=USD,ZAR,GBP,EUR,INR')
+    .then((r) => r.json())
+    .then((d) => { if (d && d.rates) render(d.rates, true, d.date); })
+    .catch(() => {});
+}
+
 function boot() {
+  fxBar();
   processTimeline();
   storyRoutes();
   galleryHandoffs();
