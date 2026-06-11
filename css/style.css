@@ -172,7 +172,7 @@ main { position: relative; z-index: 1; }
 .hero__tagline {
   position: absolute; top: 82px; left: 0; right: 0;
   text-align: center;
-  font-size: clamp(20px, 2.8vw, 36px); letter-spacing: 0.05em;
+  font-size: clamp(16px, 2.3vw, 29px); letter-spacing: 0.05em;
   text-transform: uppercase; color: var(--ink); font-weight: 600;
   line-height: 1.18;
 }

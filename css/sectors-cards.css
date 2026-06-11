@@ -123,3 +123,22 @@
   .sectors .card.reveal, .sectors .card__glyph { transition: none !important; }
   .sectors .card.reveal { opacity: 1; transform: none; }
 }
+
+/* ============ About — stats as a polished credentials bar ============ */
+/* loaded last so it refines the base .stats rules without fighting style.css */
+.about .stats { border-top: 1px solid var(--line); align-items: stretch; }
+.about .stats li {
+  padding: 30px 30px 0 30px;
+  border-left: 1px solid var(--line);
+}
+.about .stats li:first-child { border-left: none; padding-left: 0; }
+.about .stats li::before {              /* small ochre accent above each number */
+  content: ""; width: 22px; height: 2px; border-radius: 2px;
+  background: var(--ochre); margin-bottom: 16px;
+}
+.about .stats__num { letter-spacing: -0.01em; }
+.about .stats__label { line-height: 1.5; }
+@media (max-width: 680px) {
+  .about .stats li { padding: 24px 18px 0 18px; }
+  .about .stats li:nth-child(odd) { border-left: none; padding-left: 0; }
+}
