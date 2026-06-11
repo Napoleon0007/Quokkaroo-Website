@@ -384,3 +384,33 @@ html.has-fxbar .header { top: 30px; }
 
 /* trust band lives in the finale flex column now — pin it just above the footer */
 .finale .trust { order: 4; width: 100%; }
+
+/* ============ hero refinements ============ */
+/* tagline: lower (clear of the rate bar + header), thinner, elegant serif */
+.hero__tagline {
+  top: 148px;
+  font-family: var(--font-serif); font-style: italic; font-weight: 300;
+  text-transform: none; letter-spacing: 0.02em;
+  font-size: clamp(19px, 2.3vw, 31px); color: var(--ink-soft);
+}
+@media (max-width: 680px) { .hero__tagline { top: 120px; } }
+
+/* the letters breathe, they don't bounce (calmer override of `floaty`) */
+@keyframes floaty {
+  from { transform: translateY(-4px) rotate(-0.4deg); }
+  to   { transform: translateY(4px) rotate(0.4deg); }
+}
+/* the subheading holds perfectly still */
+.hero__word-sub { animation: none; }
+.hero__dash { color: var(--ochre); }
+
+/* kangaroo ears on the two O's of "roo" — one ear each, nothing else */
+.hero__word-main .ear { position: relative; }
+.hero__word-main .ear::before {
+  content: ""; position: absolute;
+  width: 0.13em; height: 0.30em; background: currentColor;
+  border-radius: 60% 60% 45% 45% / 75% 75% 25% 25%;
+  top: -0.17em; left: 50%;
+}
+.hero__word-main .ear--l::before { transform: translateX(-85%) rotate(-24deg); }
+.hero__word-main .ear--r::before { transform: translateX(-15%) rotate(24deg); }

@@ -59,14 +59,26 @@ function buildMap() {
   const g = mapLayer.getContext('2d');
   g.scale(DPR, DPR);
 
-  const ink = 'rgba(20, 18, 16, 0.10)';
-  const ochre = 'rgba(201, 111, 46, 0.4)';
+  // shading pass: oversized soft blobs merge into filled landmasses, so the
+  // continents read as shapes — the crisp dots then sit on top as texture
+  const inkShade = 'rgba(20, 18, 16, 0.05)';
+  const ochreShade = 'rgba(201, 111, 46, 0.10)';
+  for (let i = 0; i < LAND_DOTS.length; i += 2) {
+    const lat = LAND_DOTS[i], lon = LAND_DOTS[i + 1];
+    const [x, y] = project(lon, lat);
+    if (y < -4 || y > H + 4) continue;
+    g.fillStyle = inAustralia(lat, lon) ? ochreShade : inkShade;
+    g.fillRect(x - 1.4, y - 1.4, 4.5, 4.5);
+  }
+
+  const ink = 'rgba(20, 18, 16, 0.20)';
+  const ochre = 'rgba(201, 111, 46, 0.55)';
   for (let i = 0; i < LAND_DOTS.length; i += 2) {
     const lat = LAND_DOTS[i], lon = LAND_DOTS[i + 1];
     const [x, y] = project(lon, lat);
     if (y < -2 || y > H + 2) continue;
     g.fillStyle = inAustralia(lat, lon) ? ochre : ink;
-    g.fillRect(x, y, 1.7, 1.7);
+    g.fillRect(x, y, 1.8, 1.8);
   }
 }
 
@@ -115,8 +127,8 @@ function drawCities(t) {
   for (const [lon, lat] of ORIGINS) {
     const [x, y] = project(lon, lat);
     ctx.beginPath();
-    ctx.arc(x, y, 2.2, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(20, 18, 16, 0.30)';
+    ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+    ctx.fillStyle = 'rgba(20, 18, 16, 0.45)';
     ctx.fill();
   }
   for (let i = 0; i < DESTS.length; i++) {
