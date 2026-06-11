@@ -373,12 +373,14 @@ html.has-fxbar .header { top: 30px; }
 /* ============ hero refinements ============ */
 /* tagline: lower (clear of the rate bar + header), thinner, elegant serif */
 .hero__tagline {
-  top: 148px;
+  top: 188px;
   font-family: var(--font-serif); font-style: italic; font-weight: 300;
   text-transform: none; letter-spacing: 0.02em;
   font-size: clamp(19px, 2.3vw, 31px); color: var(--ink-soft);
 }
-@media (max-width: 680px) { .hero__tagline { top: 172px; } }
+/* phone: the hero stacks in fixed bands — header / tagline / world strip /
+   wordmark / Australia — keep the tagline in its band, just under the header */
+@media (max-width: 680px) { .hero__tagline { top: 108px; } }
 
 /* the letters breathe, they don't bounce (calmer override of `floaty`) */
 @keyframes floaty {

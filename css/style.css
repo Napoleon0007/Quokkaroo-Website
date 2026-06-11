@@ -182,22 +182,18 @@ main { position: relative; z-index: 1; }
   font-family: var(--font-serif); font-weight: 400;
   color: var(--ink); user-select: none;
   text-shadow: 0 6px 44px rgba(255, 246, 236, 0.78);
+  animation: floaty 5s ease-in-out infinite alternate;   /* gentle, level hover — no wave */
 }
 .hero__word-main { display: flex; font-size: clamp(52px, 12vw, 168px); line-height: 1; }
-.hero__word-main span {
-  display: inline-block;
-  animation: floaty 4.4s ease-in-out infinite alternate;
-  animation-delay: calc(var(--i) * -0.45s);
-}
+.hero__word-main span { display: inline-block; }
 .hero__word-sub {
   font-family: var(--font-ui); font-weight: 500;
   font-size: clamp(13px, 1.7vw, 22px); letter-spacing: 0.26em;
   text-transform: uppercase; color: var(--ink-soft);
-  animation: floaty 6s ease-in-out infinite alternate;
 }
 @keyframes floaty {
-  from { transform: translateY(-13px) rotate(-1.5deg); }
-  to   { transform: translateY(13px) rotate(1.5deg); }
+  from { transform: translateY(-9px); }
+  to   { transform: translateY(9px); }
 }
 .hero__side {
   position: absolute; right: 6vw; top: 62%;
@@ -214,10 +210,14 @@ main { position: relative; z-index: 1; }
 @media (max-width: 680px) {
   .hero { height: 150vh; }
   .hero__side { display: none; }
+  .hero__scrollcue { display: none; }            /* collides with the chat button */
   .hero__tagline { width: 90%; left: 5%; right: 5%; top: 68px; }
   .hero__word { font-size: clamp(44px, 15vw, 92px); }
+  /* keep the CTA caption clear of the floating buttons (right ~68px);
+     the matching .jigsaw width lives in cities.css (loads later) */
+  .hero__cta-cap { max-width: 200px; margin: 6px auto 0; }
 }
-@media (prefers-reduced-motion: reduce) { .hero__word span { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .hero__word, .hero__word span { animation: none; } }
 
 /* ============ about ============ */
 .about__statement {

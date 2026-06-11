@@ -142,3 +142,8 @@
   .about .stats li { padding: 24px 18px 0 18px; }
   .about .stats li:nth-child(odd) { border-left: none; padding-left: 0; }
 }
+
+/* ============ hero tagline — sit it well clear of the header (loaded last, wins) ============ */
+.hero__tagline { top: 188px; }
+/* phones: tagline band sits between header (ends ~102) and the world strip (starts ~172) */
+@media (max-width: 680px) { .hero__tagline { top: 108px; } }

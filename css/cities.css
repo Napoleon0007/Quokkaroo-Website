@@ -234,6 +234,9 @@ html.citypanel-lock { overflow: hidden; }
   overflow: visible;
   transform: perspective(900px) rotateX(7deg);   /* a touch more 3D plane */
 }
+/* phones: narrower so the pieces never slide under the floating buttons
+   (this rule must live HERE — cities.css loads after style.css) */
+@media (max-width: 680px) { .jigsaw { width: min(220px, 60vw); } }
 .jigsaw rect { pointer-events: none; }
 .jig { cursor: pointer; transform-box: fill-box; transform-origin: center; }
 .jig__face, .jig__side { transition: fill 0.3s ease; }

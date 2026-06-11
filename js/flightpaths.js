@@ -67,14 +67,22 @@ function buildMap() {
   mapW = W * 1.04;                 // tiny overscan so the seam sits offscreen
   mapH = mapW / 2;
   mapX = (W - mapW) / 2;
-  mapY = portrait ? H * 0.135 : (H - mapH) / 2 - H * 0.02;
+  // phone bands: fxbar+header end ~102, tagline sits 108..165 — the strip
+  // starts below the tagline and must finish above the centred wordmark
+  // (word top ≈ 45% of the screen), so short phones get a smaller strip
+  mapY = portrait ? Math.max(H * 0.205, 172) : (H - mapH) / 2 - H * 0.02;
+  if (portrait && mapY + mapH > H * 0.43) {
+    const k = Math.max(0.55, (H * 0.43 - mapY) / mapH);
+    mapW *= k; mapH *= k;
+    mapX = (W - mapW) / 2;
+  }
 
   if (portrait) {
     auS = (W - 56) / (AU_LON1 - AU_LON0);
     const auH = (AU_LAT0 - AU_LAT1) * auS;
     auX = 28;
     const stripBottom = mapY + mapH;
-    auY = stripBottom + Math.max(30, (H - stripBottom - auH) * 0.62);
+    auY = stripBottom + Math.max(24, (H - stripBottom - auH) * 0.55);
   }
 
   mapLayer = document.createElement('canvas');
