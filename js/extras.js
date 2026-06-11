@@ -158,6 +158,7 @@ function whatsappButton() {
 
 /* ---------- 7. live AUD exchange-rate bar (very top of the page) ---------- */
 function fxBar() {
+  return;   // currency bar hidden for now (per Luke) — remove this line to bring it back
   if (document.querySelector('.fxbar')) return;
   const bar = document.createElement('div');
   bar.className = 'fxbar';

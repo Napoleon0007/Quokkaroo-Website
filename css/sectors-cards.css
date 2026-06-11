@@ -147,3 +147,8 @@
 .hero__tagline { top: 188px; }
 /* phones: tagline band sits between header (ends ~102) and the world strip (starts ~172) */
 @media (max-width: 680px) { .hero__tagline { top: 108px; } }
+
+/* ============ currency (fx) top banner — hidden for now (per Luke) ============ */
+/* delete this block to bring it back */
+.fxbar { display: none !important; }
+html.has-fxbar .header { top: 0 !important; }
