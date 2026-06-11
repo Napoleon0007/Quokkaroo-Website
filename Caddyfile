@@ -4,7 +4,11 @@ root * /srv
 encode gzip zstd
 file_server
 
-# long-cache the static assets, always revalidate the HTML
-@assets path /assets/* /css/* /js/*
-header @assets Cache-Control "public, max-age=2592000"
+# images can cache long; code (css/js) revalidates hourly — index.html carries
+# ?v= stamps on every code link, so each deploy busts phone caches instantly
+@imgs path /assets/*
+header @imgs Cache-Control "public, max-age=2592000"
+@code path /css/* /js/*
+header @code Cache-Control "public, max-age=3600"
 header /index.html Cache-Control "no-cache"
+header / Cache-Control "no-cache"
