@@ -1,0 +1,264 @@
+/* ============ Quokkaroo — points calculator ============ */
+/* Uses the tokens from style.css. A focused dark card on a light section,
+   in the same family as the city dossier and QuokkaBot. */
+
+.points { background: var(--cream); position: relative; z-index: 1; }
+.points__sub { max-width: 620px; color: var(--ink-soft); margin-top: 22px; font-size: 16px; }
+.points__sub strong { color: var(--ink); }
+
+.points__mount { margin-top: 54px; }
+
+.pc__card {
+  background: var(--ink); color: var(--cream);
+  border-radius: 24px; padding: 40px clamp(24px, 4vw, 52px) 44px;
+  max-width: 760px; margin: 0 auto;
+  box-shadow: 0 40px 90px -40px rgba(20, 18, 16, 0.5);
+}
+
+/* progress */
+.pc__progress { display: flex; align-items: center; gap: 16px; margin-bottom: 30px; }
+.pc__progressbar {
+  flex: 1; height: 2px; background: rgba(255, 246, 236, 0.18);
+  position: relative; overflow: hidden; border-radius: 2px;
+}
+.pc__progressbar span {
+  position: absolute; inset: 0; transform-origin: left; background: var(--ochre);
+  transition: transform 0.45s cubic-bezier(0.2, 0.6, 0.2, 1);
+}
+.pc__progresslabel {
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255, 246, 236, 0.55); white-space: nowrap;
+}
+
+.pc__kicker {
+  font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ochre); font-weight: 500; margin-bottom: 14px;
+}
+.pc__q {
+  font-family: var(--font-serif); font-weight: 300;
+  font-size: clamp(26px, 3.4vw, 38px); line-height: 1.1;
+}
+.pc__help { margin-top: 12px; font-size: 13.5px; color: rgba(255, 246, 236, 0.6); }
+
+/* options */
+.pc__opts { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; }
+.pc__opt {
+  display: flex; align-items: center; justify-content: space-between; gap: 16px;
+  width: 100%; text-align: left; cursor: pointer;
+  padding: 16px 20px; border-radius: 14px;
+  background: rgba(255, 246, 236, 0.05);
+  border: 1px solid rgba(255, 246, 236, 0.14);
+  color: var(--cream); font-family: inherit;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+}
+.pc__opt:hover { background: rgba(255, 246, 236, 0.1); border-color: rgba(255, 246, 236, 0.3); transform: translateX(3px); }
+.pc__opt.is-on { background: rgba(201, 111, 46, 0.16); border-color: var(--ochre); }
+.pc__optlabel { font-size: 15.5px; display: flex; flex-direction: column; gap: 3px; }
+.pc__optlabel small { font-size: 12px; color: rgba(255, 246, 236, 0.5); }
+.pc__optpts {
+  font-family: var(--font-serif); font-size: 18px; color: #ffb37a;
+  flex: 0 0 auto; opacity: 0.85;
+}
+.pc__opt.is-on .pc__optpts { opacity: 1; }
+
+/* nav */
+.pc__nav { display: flex; align-items: center; justify-content: space-between; margin-top: 26px; min-height: 44px; }
+.pc__back, .pc__next, .pc__restart {
+  font-family: inherit; cursor: pointer; border-radius: 999px;
+  transition: background 0.25s, color 0.25s, border-color 0.25s;
+}
+.pc__back {
+  background: none; border: none; color: rgba(255, 246, 236, 0.7);
+  font-size: 13px; letter-spacing: 0.06em; padding: 8px 4px;
+}
+.pc__back:hover { color: var(--cream); }
+.pc__hint { font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; color: rgba(255, 246, 236, 0.4); }
+.pc__next {
+  background: var(--ochre); border: none; color: #fff;
+  padding: 12px 24px; font-size: 13px; font-weight: 500; letter-spacing: 0.06em;
+}
+.pc__next:hover { background: #e0843c; }
+
+/* result */
+.pc__result { text-align: center; }
+.pc__scorewrap { display: flex; align-items: baseline; justify-content: center; gap: 10px; margin: 6px 0 4px; }
+.pc__score {
+  font-family: var(--font-serif); font-weight: 300; line-height: 1;
+  font-size: clamp(76px, 14vw, 130px); color: var(--cream);
+}
+.pc__scoreunit { font-size: 15px; letter-spacing: 0.18em; text-transform: uppercase; color: rgba(255, 246, 236, 0.5); }
+
+.pc__gauge {
+  position: relative; height: 6px; border-radius: 6px; margin: 22px auto 8px;
+  max-width: 460px; background: rgba(255, 246, 236, 0.14); overflow: visible;
+}
+.pc__gauge span {
+  position: absolute; left: 0; top: 0; bottom: 0; transform-origin: left;
+  background: linear-gradient(90deg, #c96f2e, #ffb37a); border-radius: 6px;
+  transition: transform 0.1s linear;
+}
+.pc__gaugemark {
+  position: absolute; top: -5px; width: 2px; height: 16px;
+  background: var(--cream); transform: translateX(-50%);
+}
+.pc__gaugemark::after {
+  content: attr(data-label); position: absolute; top: 18px; left: 50%;
+  transform: translateX(-50%); white-space: nowrap;
+  font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;
+  color: rgba(255, 246, 236, 0.5); font-style: normal;
+}
+.pc__verdict { margin: 30px auto 0; max-width: 520px; font-size: 15.5px; line-height: 1.6; color: rgba(255, 246, 236, 0.85); }
+.pc__verdict strong { color: var(--cream); }
+
+.pc__seclabel {
+  margin: 34px 0 14px; font-size: 11px; letter-spacing: 0.24em;
+  text-transform: uppercase; color: var(--ochre); font-weight: 500;
+}
+
+/* pathway rows */
+.pc__paths { display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.pc__path {
+  display: grid; grid-template-columns: 1fr auto; grid-template-areas: "name score" "note tag";
+  gap: 2px 14px; align-items: center;
+  padding: 14px 18px; border-radius: 12px;
+  background: rgba(255, 246, 236, 0.05); border: 1px solid rgba(255, 246, 236, 0.12);
+}
+.pc__path.is-ok { background: rgba(201, 111, 46, 0.12); border-color: rgba(201, 111, 46, 0.5); }
+.pc__pathname { grid-area: name; font-size: 15px; }
+.pc__pathname em { font-style: normal; color: #ffb37a; margin-left: 4px; font-size: 13px; }
+.pc__pathscore { grid-area: score; font-family: var(--font-serif); font-size: 30px; line-height: 1; }
+.pc__pathnote { grid-area: note; font-size: 12px; color: rgba(255, 246, 236, 0.5); }
+.pc__pathtag {
+  grid-area: tag; justify-self: end; font-size: 11px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: rgba(255, 246, 236, 0.55);
+}
+.pc__path.is-ok .pc__pathtag { color: #ffb37a; }
+
+/* tips */
+.pc__tips { list-style: none; display: flex; flex-direction: column; gap: 8px; text-align: left; }
+.pc__tips li {
+  display: flex; align-items: center; gap: 14px;
+  padding: 12px 16px; border-radius: 12px;
+  background: rgba(255, 246, 236, 0.04); border: 1px solid rgba(255, 246, 236, 0.1);
+  font-size: 14px; color: rgba(255, 246, 236, 0.82);
+}
+.pc__tips strong { color: var(--cream); }
+.pc__tippts {
+  flex: 0 0 auto; font-family: var(--font-serif); font-size: 17px; color: #ffb37a;
+  min-width: 38px;
+}
+
+.pc__fine { margin: 30px auto 0; max-width: 560px; font-size: 12px; line-height: 1.6; color: rgba(255, 246, 236, 0.45); }
+.pc__cta { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 28px; }
+.pc__restart {
+  margin-top: 22px; background: none; border: 1px solid rgba(255, 246, 236, 0.22);
+  color: rgba(255, 246, 236, 0.7); padding: 10px 20px; font-size: 12.5px; letter-spacing: 0.06em;
+}
+.pc__restart:hover { border-color: var(--ochre); color: var(--cream); }
+
+@media (max-width: 560px) {
+  .pc__card { padding: 30px 20px 34px; border-radius: 18px; }
+  .pc__path { grid-template-columns: 1fr auto; }
+  .pc__pathtag { grid-column: 1 / -1; justify-self: start; margin-top: 2px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pc__progressbar span, .pc__opt, .pc__gauge span { transition: none; }
+}
+
+/* ============ circular "Check your points" launcher (above QuokkaBot) ============ */
+.pc-fab {
+  position: fixed; right: 22px; bottom: 94px; z-index: 79;
+  display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+  background: none; border: none; padding: 0; cursor: pointer;
+  font-family: var(--font-ui);
+}
+.pc-fab__label {
+  background: var(--cream); color: var(--ink);
+  padding: 9px 16px; border-radius: 999px; white-space: nowrap;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.02em;
+  box-shadow: 0 10px 26px -12px rgba(20, 18, 16, 0.5);
+  transition: transform 0.3s ease;
+}
+.pc-fab__circle {
+  width: 58px; height: 58px; flex: 0 0 auto;
+  display: grid; place-items: center; border-radius: 50%;
+  background: var(--cream); color: #16a45c;     /* the green tick */
+  border: 1px solid rgba(20, 18, 16, 0.06);
+  box-shadow: 0 12px 30px -8px rgba(20, 18, 16, 0.42);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.pc-fab:hover .pc-fab__circle { transform: translateY(-3px); box-shadow: 0 16px 34px -8px rgba(22, 164, 92, 0.45); }
+.pc-fab:hover .pc-fab__label { transform: translateX(-2px); }
+.pc-fab:active .pc-fab__circle { transform: translateY(-1px); }
+@media (max-width: 720px) { .pc-fab__label { display: none; } }   /* circle only on small screens */
+@media (max-width: 520px) {
+  .pc-fab { right: 16px; bottom: 86px; }
+  .pc-fab__circle { width: 52px; height: 52px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pc-fab__circle, .pc-fab__label { transition: none; }
+}
+
+/* ============ points calculator modal (opened by the launcher) ============ */
+html.pc-lock { overflow: hidden; }
+.pc-modal { position: fixed; inset: 0; z-index: 95; }
+.pc-modal[hidden] { display: none; }
+.pc-modal__scrim {
+  position: absolute; inset: 0;
+  background: rgba(10, 9, 8, 0.62); backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity 0.35s ease;
+}
+.pc-modal.is-open .pc-modal__scrim { opacity: 1; }
+.pc-modal__sheet {
+  position: absolute; left: 50%; top: 50%;
+  width: min(640px, calc(100vw - 28px)); max-height: 90vh;
+  display: flex; flex-direction: column;
+  overflow-y: auto; overscroll-behavior: contain; -webkit-overflow-scrolling: touch;
+  transform: translate(-50%, -46%); opacity: 0;
+  transition: transform 0.42s cubic-bezier(0.2, 0.7, 0.2, 1), opacity 0.35s ease;
+}
+.pc-modal.is-open .pc-modal__sheet { transform: translate(-50%, -50%); opacity: 1; }
+.pc-modal__close {
+  position: sticky; top: 6px; z-index: 5; align-self: flex-end;
+  margin-bottom: -42px;                          /* overlap the card's top-right corner */
+  width: 42px; height: 42px; border-radius: 50%;
+  background: rgba(20, 18, 16, 0.9); border: 1px solid rgba(255, 246, 236, 0.25);
+  color: var(--cream); font-size: 22px; line-height: 1; cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+}
+.pc-modal__close:hover { background: var(--ochre); border-color: var(--ochre); transform: rotate(90deg); }
+.pc-modal__body { padding-top: 6px; }
+.pc-modal__body .pc__card { box-shadow: none; }   /* the sheet provides the float */
+@media (prefers-reduced-motion: reduce) {
+  .pc-modal__scrim, .pc-modal__sheet { transition: none; }
+}
+
+/* ---------- "Your Quokkaroo plan" (occupation + points combined) ---------- */
+.pc__plan {
+  margin-top: 34px; padding: 24px 26px 20px; border-radius: 16px; text-align: left;
+  background: rgba(201, 111, 46, 0.1); border: 1px solid rgba(201, 111, 46, 0.45);
+}
+.pc__plan .pc__seclabel { margin: 0 0 16px; }
+.pc__plangrid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 22px; }
+.pc__plangrid div { display: flex; flex-direction: column; gap: 3px; }
+.pc__plangrid i {
+  font-style: normal; font-size: 10.5px; letter-spacing: 0.18em;
+  text-transform: uppercase; color: rgba(255, 246, 236, 0.5);
+}
+.pc__plangrid b { font-weight: 400; font-size: 15px; color: var(--cream); line-height: 1.4; }
+.pc__planmail {
+  display: inline-block; margin-top: 18px; font-size: 13.5px;
+  color: #ffb37a; text-decoration-color: rgba(255, 179, 122, 0.4);
+}
+.pc__planhint {
+  margin-top: 26px; font-size: 13.5px; color: rgba(255, 246, 236, 0.6);
+  text-align: center;
+}
+.pc__planhint strong { color: #ffb37a; }
+@media (max-width: 560px) { .pc__plangrid { grid-template-columns: 1fr; } }
+
+/* ---------- score celebration ---------- */
+.pc-confetti {
+  position: fixed; z-index: 95; width: 9px; height: 13px;
+  border-radius: 2px; pointer-events: none;
+}

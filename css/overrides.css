@@ -1,0 +1,7 @@
+/* Quokkaroo — Luke's overrides. Loaded LAST so these always win.
+   Keep this file for "just take that away" requests that target another
+   chat's components without ripping their files out. */
+
+/* Remove the faint Australia line-drawing + pin in the Sectors section
+   (the "white logo in the middle"). */
+.sectors__viz { display: none !important; }

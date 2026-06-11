@@ -1,0 +1,418 @@
+/* ============ Quokkaroo — city dossier panel + globe labels ============ */
+/* Uses the design tokens from style.css (:root). Dark-finale aesthetic. */
+
+html.citypanel-lock { overflow: hidden; }
+
+.citypanel {
+  position: fixed; inset: 0; z-index: 70;
+}
+.citypanel__scrim {
+  position: absolute; inset: 0;
+  background: rgba(10, 9, 8, 0.6);
+  backdrop-filter: blur(6px);
+  opacity: 0; transition: opacity 0.45s ease;
+}
+.citypanel.is-open .citypanel__scrim { opacity: 1; }
+
+.citypanel__sheet {
+  position: absolute; top: 0; right: 0; bottom: 0;
+  width: min(720px, 100%);
+  background: var(--ink); color: var(--cream);
+  overflow-y: auto; overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  transform: translateX(60px); opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.2, 0.6, 0.2, 1), opacity 0.5s ease;
+  box-shadow: -30px 0 80px rgba(0, 0, 0, 0.45);
+}
+.citypanel.is-open .citypanel__sheet { transform: none; opacity: 1; }
+
+/* top bar */
+.citypanel__top {
+  position: sticky; top: 0; z-index: 3;
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 28px;
+  background: linear-gradient(to bottom, rgba(20, 18, 16, 0.92), rgba(20, 18, 16, 0));
+}
+.citypanel__brand { display: flex; align-items: center; gap: 11px; }
+.citypanel__brand img { height: 30px; width: auto; }
+.citypanel__brandword {
+  font-family: var(--font-serif); font-size: 20px; color: var(--cream);
+}
+.citypanel__close {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: rgba(255, 246, 236, 0.08);
+  border: 1px solid rgba(255, 246, 236, 0.25);
+  color: var(--cream); font-size: 24px; line-height: 1; cursor: pointer;
+  transition: background 0.3s, border-color 0.3s, transform 0.3s;
+}
+.citypanel__close:hover {
+  background: var(--ochre); border-color: var(--ochre); transform: rotate(90deg);
+}
+
+/* hero */
+.citypanel__hero { position: relative; min-height: 320px; }
+.citypanel__hero > img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
+}
+.citypanel__hero::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(to bottom, rgba(20, 18, 16, 0.25) 0%, rgba(20, 18, 16, 0.05) 40%, rgba(20, 18, 16, 0.92) 100%);
+}
+.citypanel__title {
+  position: relative; z-index: 1;
+  padding: 200px 32px 22px;
+}
+.citypanel__kicker {
+  font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ochre); font-weight: 500; margin-bottom: 8px;
+}
+.citypanel__name {
+  font-family: var(--font-serif); font-weight: 300;
+  font-size: clamp(46px, 8vw, 72px); line-height: 1;
+}
+.citypanel__tagline {
+  margin-top: 10px; font-size: 15px; color: rgba(255, 246, 236, 0.75);
+}
+
+/* body */
+.citypanel__body { padding: 30px 32px 56px; }
+.citypanel__intro {
+  font-family: var(--font-serif); font-weight: 300;
+  font-size: clamp(18px, 2.4vw, 22px); line-height: 1.5;
+}
+
+.citypanel__facts {
+  list-style: none; display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 0 22px; margin: 30px 0 8px;
+  border-top: 1px solid rgba(255, 246, 236, 0.16);
+}
+.citypanel__facts li {
+  padding: 16px 0 14px;
+  border-bottom: 1px solid rgba(255, 246, 236, 0.1);
+  display: flex; flex-direction: column; gap: 3px;
+}
+.citypanel__factval {
+  font-family: var(--font-serif); font-weight: 300; font-size: 21px;
+}
+.citypanel__factlabel {
+  font-size: 11px; letter-spacing: 0.16em; text-transform: uppercase;
+  color: rgba(255, 246, 236, 0.55);
+}
+
+.citypanel__section { margin-top: 34px; }
+.citypanel__seckicker {
+  font-size: 11px; letter-spacing: 0.26em; text-transform: uppercase;
+  color: var(--ochre); font-weight: 500; margin-bottom: 10px;
+}
+.citypanel__sectext {
+  font-size: 15px; line-height: 1.7; color: rgba(255, 246, 236, 0.82);
+}
+
+.citypanel__tags { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+.citypanel__tag {
+  font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 7px 14px; border-radius: 999px;
+  border: 1px solid rgba(201, 111, 46, 0.55); color: #ffa75e;
+}
+
+.citypanel__visa {
+  margin-top: 34px; padding: 22px 24px;
+  border-left: 2px solid var(--ochre); border-radius: 0 14px 14px 0;
+  background: rgba(201, 111, 46, 0.1);
+}
+
+.citypanel__gallery {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px;
+  margin-top: 38px;
+}
+.citypanel__gallery figure {
+  position: relative; border-radius: 14px; overflow: hidden; aspect-ratio: 4 / 3;
+}
+.citypanel__gallery figure:first-child:nth-last-child(odd) { grid-column: 1 / -1; aspect-ratio: 16 / 8; }
+.citypanel__gallery img {
+  width: 100%; height: 100%; object-fit: cover;
+  transform: scale(1.04); transition: transform 0.7s ease;
+}
+.citypanel__gallery figure:hover img { transform: scale(1); }
+.citypanel__gallery figcaption {
+  position: absolute; left: 14px; bottom: 11px;
+  font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: #fff; text-shadow: 0 1px 8px rgba(0, 0, 0, 0.6);
+}
+
+.citypanel__cta {
+  margin-top: 44px; padding-top: 34px; text-align: center;
+  border-top: 1px solid rgba(255, 246, 236, 0.16);
+}
+.citypanel__ctaline {
+  font-family: var(--font-serif); font-weight: 300; font-style: italic;
+  font-size: clamp(19px, 2.6vw, 24px); max-width: 420px; margin: 0 auto;
+}
+.citypanel__actions {
+  display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;
+  margin-top: 26px;
+}
+.citypanel__fine {
+  margin-top: 40px; font-size: 11px; color: rgba(255, 246, 236, 0.35);
+}
+
+@media (max-width: 560px) {
+  .citypanel__title { padding: 150px 22px 18px; }
+  .citypanel__body { padding: 24px 22px 48px; }
+  .citypanel__facts { grid-template-columns: 1fr 1fr; gap: 0 14px; }
+  .citypanel__gallery { grid-template-columns: 1fr; }
+  .citypanel__gallery figure:first-child:nth-last-child(odd) { grid-column: auto; aspect-ratio: 4 / 3; }
+}
+
+/* ============ globe city label (hover/touch tooltip) ============ */
+.globe-tip {
+  position: absolute; z-index: 2;
+  transform: translate(-50%, -130%);
+  padding: 7px 13px; border-radius: 999px;
+  background: rgba(20, 18, 16, 0.85);
+  border: 1px solid rgba(255, 167, 94, 0.6);
+  color: var(--cream); font-size: 11.5px; letter-spacing: 0.14em;
+  text-transform: uppercase; white-space: nowrap;
+  pointer-events: none; opacity: 0; transition: opacity 0.2s ease;
+}
+.globe-tip.is-on { opacity: 1; }
+.globe-tip::after {
+  content: "tap"; margin-left: 8px; color: #ffa75e; letter-spacing: 0.1em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .citypanel__scrim, .citypanel__sheet, .citypanel__gallery img { transition: none; }
+}
+
+/* ============ migration flight paths — hero background ============ */
+#scene { display: none !important; }   /* replaces the old particle scene */
+.flightpaths {
+  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+}
+.flightpaths canvas { width: 100%; height: 100%; display: block; }
+
+
+/* ============ header CTA — black puzzle piece, white writing ============ */
+.hdrpuzzle { display: inline-block; line-height: 0; text-decoration: none; }
+.hdrpuzzle svg {
+  width: 50px; height: auto; display: block; overflow: visible;
+  animation: hdrFloat 4.6s ease-in-out infinite;
+  transition: transform 0.3s ease;
+}
+.hdrpuzzle:hover svg { transform: scale(1.06); }
+@keyframes hdrFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+.hdrpuzzle__side { fill: #050403; }
+.hdrpuzzle__face {
+  fill: url(#hdrInk);
+  filter: url(#hdrBevel) drop-shadow(0 5px 9px rgba(20, 18, 16, 0.42));
+  transition: fill 0.3s ease;
+}
+.hdrpuzzle rect { pointer-events: none; }
+.hdrpuzzle text {
+  font-family: var(--font-ui); font-weight: 500; font-size: 20px;
+  letter-spacing: 0.02em; fill: #fff; pointer-events: none;
+}
+.hdrpuzzle:hover .hdrpuzzle__face { fill: var(--ochre); }
+.hdrpuzzle:focus-visible .hdrpuzzle__face { fill: var(--ochre); }
+@media (max-width: 680px) { .hdrpuzzle svg { width: 52px; } }
+
+/* ============ hero CTA — two interlocking puzzle pieces ============ */
+/* One says "I'm hiring", the other "Find work". They clearly interlock (knob +
+   socket) but a visible seam between them shows they are two separate choices. */
+.jigsaw {
+  display: block; width: min(300px, 74vw); height: auto; margin: 2px auto 0;
+  overflow: visible;
+  transform: perspective(900px) rotateX(7deg);   /* a touch more 3D plane */
+}
+.jigsaw rect { pointer-events: none; }
+.jig { cursor: pointer; transform-box: fill-box; transform-origin: center; }
+.jig__face, .jig__side { transition: fill 0.3s ease; }
+.jig__face--ink { fill: url(#jigInk); }
+.jig__side--ink { fill: #060504; }                 /* the extruded "thickness" edge */
+.jig__face--cream { fill: url(#jigCream); }
+.jig__side--cream { fill: #c9b89e; }
+.jig text {
+  font-family: var(--font-serif); font-weight: 400; font-size: 30px;
+  pointer-events: none;
+}
+.jig--hire text { fill: var(--cream); }
+.jig--work text { fill: var(--ink); }
+.jig:hover .jig__face { fill: var(--ochre); }
+.jig:hover .jig__side { fill: #8f4a1d; }
+.jig:hover text { fill: #fff; }
+.jig:focus-visible { outline: none; }
+.jig:focus-visible .jig__face { stroke: var(--ochre); stroke-width: 3; }
+/* float — each piece hovers off the page, gently out of phase */
+/* clearly separate pieces, hovering higher off the page, out of phase */
+.jig--hire { animation: jigFloatA 4.6s ease-in-out infinite; }
+.jig--work { animation: jigFloatB 5.4s ease-in-out infinite 0.5s; }
+@keyframes jigFloatA {
+  0%, 100% { transform: translate(-13px, 0); }
+  50%      { transform: translate(-13px, -13px); }
+}
+@keyframes jigFloatB {
+  0%, 100% { transform: translate(13px, 0); }
+  50%      { transform: translate(13px, -10px); }
+}
+.jig:hover { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) {
+  .jig--hire, .jig--work { animation: none; }
+  .jigsaw { transform: none; }
+}
+
+/* ============ "The Missing Piece" — hero label for the puzzle snake ============ */
+.missing-piece-label {
+  position: absolute; left: 36px; bottom: 90px; z-index: 2;
+  font-family: var(--font-serif); font-style: italic; font-weight: 400;
+  font-size: clamp(20px, 2.4vw, 30px); color: var(--ink);
+  line-height: 1.1; pointer-events: none;
+}
+.missing-piece-label span {
+  display: block;
+  font-family: var(--font-ui); font-style: normal; font-weight: 500;
+  font-size: 11px; letter-spacing: 0.28em; text-transform: uppercase;
+  color: var(--ochre); margin-bottom: 6px;
+}
+@media (max-width: 680px) {
+  .missing-piece-label { left: 20px; bottom: 70px; }
+}
+
+/* ============ QuokkaBot — migration chatbot ============ */
+.qb { position: fixed; right: 22px; bottom: 22px; z-index: 80; font-family: var(--font-ui); }
+
+.qb__launch {
+  display: flex; align-items: center; justify-content: flex-end; gap: 12px;
+  background: none; border: none; padding: 0; cursor: pointer;
+}
+.qb__launchcircle {
+  width: 58px; height: 58px; flex: 0 0 auto;
+  display: grid; place-items: center; border-radius: 50%;
+  background: var(--ink);
+  box-shadow: 0 12px 34px -10px rgba(20, 18, 16, 0.55);
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+.qb__launchcircle img { width: 42px; height: 42px; object-fit: contain; }
+.qb__launch:hover .qb__launchcircle { transform: translateY(-3px); background: var(--ochre); }
+.qb--open .qb__launchcircle { background: var(--ochre); }
+.qb__launchtag {
+  background: var(--ink); color: var(--cream); white-space: nowrap;
+  padding: 9px 16px; border-radius: 999px;
+  font-size: 13px; letter-spacing: 0.04em; font-weight: 500;
+  box-shadow: 0 10px 26px -12px rgba(20, 18, 16, 0.5);
+  transition: transform 0.3s ease;
+}
+.qb__launch:hover .qb__launchtag { transform: translateX(-2px); }
+@media (max-width: 720px) { .qb__launchtag { display: none; } }   /* circle only on small screens */
+@media (max-width: 520px) {
+  .qb__launchcircle { width: 52px; height: 52px; }
+  .qb__launchcircle img { width: 38px; height: 38px; }
+}
+
+.qb__win[hidden] { display: none; }   /* class rule below must not beat the hidden attr */
+.qb__win {
+  position: absolute; right: 0; bottom: 72px;
+  width: min(380px, calc(100vw - 32px));
+  height: min(560px, calc(100vh - 120px));
+  display: flex; flex-direction: column;
+  background: var(--ink); color: var(--cream);
+  border-radius: 22px; overflow: hidden;
+  border: 1px solid rgba(255, 246, 236, 0.12);
+  box-shadow: 0 30px 70px -20px rgba(0, 0, 0, 0.6);
+  transform-origin: bottom right;
+  animation: qb-pop 0.32s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+@keyframes qb-pop { from { opacity: 0; transform: translateY(14px) scale(0.96); } to { opacity: 1; transform: none; } }
+
+.qb__head {
+  display: flex; align-items: center; gap: 12px; padding: 16px 18px;
+  background: linear-gradient(120deg, #1d1a17, #2a1d12);
+  border-bottom: 1px solid rgba(255, 246, 236, 0.1);
+}
+.qb__head > img { width: 38px; height: 38px; object-fit: contain; }
+.qb__name { font-family: var(--font-serif); font-size: 18px; line-height: 1.1; }
+.qb__sub { font-size: 11px; letter-spacing: 0.04em; color: rgba(255, 246, 236, 0.55); }
+.qb__close {
+  margin-left: auto; width: 30px; height: 30px; border-radius: 50%;
+  background: rgba(255, 246, 236, 0.08); border: none; color: var(--cream);
+  font-size: 20px; line-height: 1; cursor: pointer; transition: background 0.25s;
+}
+.qb__close:hover { background: var(--ochre); }
+
+.qb__msgs {
+  flex: 1; overflow-y: auto; overscroll-behavior: contain;
+  padding: 18px; display: flex; flex-direction: column; gap: 12px;
+}
+.qb__msg {
+  max-width: 86%; padding: 11px 15px; border-radius: 16px;
+  font-size: 13.5px; line-height: 1.55; word-wrap: break-word;
+}
+.qb__msg--bot {
+  align-self: flex-start; background: rgba(255, 246, 236, 0.07);
+  border: 1px solid rgba(255, 246, 236, 0.08); border-bottom-left-radius: 5px;
+  color: rgba(255, 246, 236, 0.92);
+}
+.qb__msg--user {
+  align-self: flex-end; background: var(--ochre); color: #fff;
+  border-bottom-right-radius: 5px;
+}
+.qb__msg--bot ul { margin: 8px 0 2px; padding-left: 18px; }
+.qb__msg--bot li { margin-bottom: 5px; }
+.qb__msg--bot a { color: #ffb37a; }
+.qb__msg--bot strong { color: var(--cream); }
+.qb-fine { display: block; margin-top: 9px; font-size: 11.5px; font-style: italic; color: rgba(255, 246, 236, 0.45); }
+
+.qb__citybtn {
+  display: inline-block; margin-top: 12px; padding: 9px 16px;
+  background: none; border: 1px solid var(--ochre); border-radius: 999px;
+  color: #ffb37a; font-size: 12.5px; cursor: pointer; font-family: inherit;
+  transition: background 0.25s, color 0.25s;
+}
+.qb__citybtn:hover { background: var(--ochre); color: #fff; }
+
+.qb__dots { display: inline-flex; gap: 4px; }
+.qb__dots i {
+  width: 6px; height: 6px; border-radius: 50%; background: rgba(255, 246, 236, 0.5);
+  animation: qb-blink 1.2s infinite ease-in-out;
+}
+.qb__dots i:nth-child(2) { animation-delay: 0.2s; }
+.qb__dots i:nth-child(3) { animation-delay: 0.4s; }
+@keyframes qb-blink { 0%, 80%, 100% { opacity: 0.25; } 40% { opacity: 1; } }
+
+.qb__chips {
+  display: flex; flex-wrap: wrap; gap: 7px; padding: 0 18px 12px;
+}
+.qb__chips button {
+  padding: 8px 13px; border-radius: 999px; cursor: pointer;
+  background: rgba(255, 246, 236, 0.06); border: 1px solid rgba(255, 246, 236, 0.16);
+  color: rgba(255, 246, 236, 0.82); font-size: 12px; font-family: inherit;
+  transition: background 0.25s, border-color 0.25s, color 0.25s;
+}
+.qb__chips button:hover { background: var(--ochre); border-color: var(--ochre); color: #fff; }
+
+.qb__bar {
+  display: flex; gap: 8px; padding: 14px 16px;
+  border-top: 1px solid rgba(255, 246, 236, 0.1);
+}
+.qb__bar input {
+  flex: 1; padding: 11px 15px; border-radius: 999px;
+  background: rgba(255, 246, 236, 0.07); border: 1px solid rgba(255, 246, 236, 0.16);
+  color: var(--cream); font-size: 13.5px; font-family: inherit; outline: none;
+  transition: border-color 0.25s;
+}
+.qb__bar input:focus { border-color: var(--ochre); }
+.qb__bar input::placeholder { color: rgba(255, 246, 236, 0.4); }
+.qb__bar button {
+  width: 44px; flex: 0 0 44px; border-radius: 50%; cursor: pointer;
+  background: var(--ochre); border: none; color: #fff; font-size: 18px;
+  transition: transform 0.25s, background 0.25s;
+}
+.qb__bar button:hover { transform: scale(1.06); }
+
+@media (max-width: 520px) {
+  .qb { right: 14px; bottom: 14px; }
+  .qb__win { bottom: 70px; height: min(70vh, calc(100vh - 110px)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .qb__win { animation: none; }
+  .qb__dots i { animation: none; }
+}

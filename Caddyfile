@@ -1,0 +1,10 @@
+:{$PORT}
+
+root * /srv
+encode gzip zstd
+file_server
+
+# long-cache the static assets, always revalidate the HTML
+@assets path /assets/* /css/* /js/*
+header @assets Cache-Control "public, max-age=2592000"
+header /index.html Cache-Control "no-cache"

@@ -1,0 +1,5 @@
+.DS_Store
+*.bak
+_restore/
+node_modules/
+/tmp/

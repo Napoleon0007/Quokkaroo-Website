@@ -1,0 +1,119 @@
+/* Quokkaroo — Sectors "Skills fill the map" animation.
+   Uses the :root tokens from style.css. Sits between the section intro and the cards. */
+
+.sectors__viz {
+  margin: 46px auto 4px;
+  max-width: 560px;
+  text-align: center;
+}
+.sectors__map {
+  width: 100%;
+}
+.smap {
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow: visible;
+}
+
+/* mainland outline: draws itself, then a faint ochre wash fades in */
+.smap__outline {
+  fill: rgba(201, 111, 46, 0.07);
+  fill-opacity: 0;
+  stroke: var(--ink-soft);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.8s cubic-bezier(0.6, 0.05, 0.2, 1),
+              fill-opacity 1s ease 1.1s;
+}
+.sectors__map.is-drawn .smap__outline {
+  stroke-dashoffset: 0 !important;
+  fill-opacity: 1;
+}
+
+/* Tasmania: pops in just after the mainland finishes drawing */
+.smap__tas {
+  fill: rgba(201, 111, 46, 0.07);
+  stroke: var(--ink-soft);
+  stroke-width: 1.6;
+  opacity: 0;
+  transform: scale(0.4);
+  transform-origin: center;
+  transform-box: fill-box;
+  transition: opacity 0.5s ease 1.5s, transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) 1.5s;
+}
+.sectors__map.is-drawn .smap__tas { opacity: 1; transform: scale(1); }
+
+/* glyph-pins fly in from their own edge and settle */
+.smap__pin {
+  opacity: 0;
+  transform: translate(var(--dx), var(--dy));
+  transition: transform 0.95s cubic-bezier(0.18, 0.7, 0.2, 1) var(--delay),
+              opacity 0.7s ease var(--delay);
+}
+.sectors__map.is-drawn .smap__pin { opacity: 1; transform: translate(0, 0); }
+
+.smap__head {
+  fill: var(--cream);
+  stroke: var(--ochre);
+  stroke-width: 1.6;
+}
+.smap__glyph {
+  fill: none;
+  stroke: var(--ochre);
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.smap__glyph circle, .smap__glyph ellipse { fill: var(--ochre); stroke: none; }
+
+.smap__label {
+  fill: var(--ink-soft);
+  font-family: var(--font-ui);
+  font-size: 12.5px;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+/* halo pulse — starts once the pin has settled */
+.smap__halo {
+  fill: none;
+  stroke: var(--ochre);
+  stroke-width: 1.4;
+  opacity: 0;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+.sectors__map.is-drawn .smap__halo {
+  animation: smapPulse 2.6s ease-out infinite;
+  animation-delay: var(--delay);
+}
+@keyframes smapPulse {
+  0%   { opacity: 0.55; transform: scale(0.7); }
+  70%  { opacity: 0;    transform: scale(1.9); }
+  100% { opacity: 0;    transform: scale(1.9); }
+}
+
+.sectors__vizcap {
+  margin: 18px auto 0;
+  max-width: 460px;
+  color: var(--ink-soft);
+  font-family: var(--font-serif);
+  font-weight: 300;
+  font-style: italic;
+  font-size: clamp(15px, 1.9vw, 18px);
+  line-height: 1.5;
+}
+
+@media (max-width: 620px) {
+  .sectors__viz { margin-top: 34px; }
+  .smap__label { font-size: 11px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .smap__outline, .smap__tas, .smap__pin, .smap__halo {
+    transition: none !important;
+  }
+  .sectors__map.is-drawn .smap__halo { animation: none; opacity: 0.4; }
+}
