@@ -1,9 +1,10 @@
-// Quokkaroo — migration flight paths over breathing terrain (hero background).
-// Two quiet layers behind the hero: ultra-faint topographic contour lines that
-// drift and breathe like an architect's terrain map, and a faint dotted world
-// map (NASA-sampled land dots) with ochre arcs flying home to Australia —
-// each with a travelling dot like a live flight tracker. Confined to the
-// hero; fades out as you scroll past. 2D canvas — light and quiet.
+// Quokkaroo — migration flight paths (hero background).
+// Landscape: faint breathing topo contours + a proportional dotted world map,
+// ochre arcs flying home to Australia with travelling flight dots.
+// Portrait (phones): ARRIVALS RADAR — one big, true-proportioned dotted
+// Australia with soft radar rings, and flights swooping in from labelled
+// origin points around the screen edges onto pulsing city beacons.
+// Confined to the hero; fades out as you scroll past. 2D canvas — light.
 import { LAND_DOTS } from './landdots.js';
 
 const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -26,6 +27,21 @@ const DESTS = [
   [138.6, -34.93],  // Adelaide
 ];
 
+// portrait radar: where each origin's flight enters the screen (fractions of
+// the viewport, picked to sit clear of the header band, tagline, wordmark and
+// floating buttons) — order matches ORIGINS
+const TAGS = [
+  // minY keeps the top cluster below the tagline on short screens
+  { n: "JO'BURG",   fx: 0.05, fy: 0.40, align: 'left'   },
+  { n: 'CAPE TOWN', fx: 0.05, fy: 0.585, align: 'left'  },
+  { n: 'LONDON',    fx: 0.09, fy: 0.235, align: 'left',  minY: 196 },
+  { n: 'MUMBAI',    fx: 0.95, fy: 0.27, align: 'right',  minY: 210 },
+  { n: 'MANILA',    fx: 0.95, fy: 0.385, align: 'right' },
+  { n: 'SÃO PAULO', fx: 0.05, fy: 0.665, align: 'left'  },
+  { n: 'DUBAI',     fx: 0.58, fy: 0.215, align: 'center', minY: 180 },
+  { n: 'DUBLIN',    fx: 0.28, fy: 0.205, align: 'left',  minY: 186 },
+];
+
 function inAustralia(lat, lon) {
   return (lat > -39.5 && lat < -10.5 && lon > 112 && lon < 154.5) ||
          (lat > -44 && lat < -40 && lon > 144 && lon < 149);  // Tasmania
@@ -41,32 +57,30 @@ const ctx = canvas.getContext('2d');
 
 let W = 0, H = 0, DPR = 1, mapLayer = null, portrait = false;
 let mapX = 0, mapY = 0, mapW = 0, mapH = 0;
-let cLon0 = 12, cLat0 = 58, cSLon = 1, cSLat = 1;   // portrait corridor scales
+let auX = 0, auY = 0, auS = 0;          // portrait Australia (true proportions)
+let anchors = [];                        // portrait arc entry points, px
 
-// portrait corridor: Africa → Asia → Australia fills the WHOLE screen,
-// edge to edge (far-west origins fly in from off-screen)
-const C_LON0 = 12, C_LON1 = 158, C_LAT0 = 58, C_LAT1 = -47;
+// Australia bounds incl. Tasmania, with breathing room
+const AU_LON0 = 110, AU_LON1 = 155, AU_LAT0 = -8;
 
 function project(lon, lat) {
   if (portrait) {
-    return [mapX + (lon - cLon0) * cSLon, (cLat0 - lat) * cSLat];
+    return [auX + (lon - AU_LON0) * auS, auY + (AU_LAT0 - lat) * auS];
   }
   return [mapX + ((lon + 180) / 360) * mapW, mapY + ((90 - lat) / 180) * mapH];
 }
 
-// pre-render the dotted world once; redrawn only on resize.
-// Landscape: one proportional world map, centred.
-// Portrait: a full-bleed Africa→Asia→Australia corridor covers the whole
-// screen — gently taller than true scale so the continents reach top to
-// bottom; Australia sits lower-right at full strength.
+// pre-render the dotted land once; redrawn only on resize
 function buildMap() {
   portrait = H > W * 1.15;
 
   if (portrait) {
-    cLon0 = C_LON0; cLat0 = C_LAT0;
-    cSLon = (W + 8) / (C_LON1 - C_LON0);
-    cSLat = Math.min(H / (C_LAT0 - C_LAT1), cSLon * 2.2);
-    mapX = -4;
+    // one big Australia, TRUE proportions (1° lon = 1° lat), centred,
+    // sitting in the lower-middle of the screen under the wordmark
+    auS = (W - 44) / (AU_LON1 - AU_LON0);
+    auX = 22;
+    auY = H * 0.40;
+    anchors = TAGS.map((p) => [p.fx * W, Math.max(p.fy * H, p.minY || 0)]);
   } else {
     mapW = W * 1.04;               // tiny overscan so the seam sits offscreen
     mapH = mapW / 2;
@@ -80,34 +94,31 @@ function buildMap() {
   const g = mapLayer.getContext('2d');
   g.scale(DPR, DPR);
 
-  // the corridor is stretched vertically — draw its dots taller so the
-  // landmasses stay dense instead of going stripey
-  const stretch = portrait ? cSLat / cSLon : 1;
-  const shW = portrait ? 5.4 : 4.5, shH = portrait ? Math.min(5.4 * stretch, 11) : 4.5;
-  const dotW = portrait ? 2.1 : 1.8, dotH = portrait ? Math.min(2.1 * stretch, 4.4) : 1.8;
+  const shS = portrait ? 6.5 : 4.5;       // shade blob
+  const dotS = portrait ? 2.4 : 1.8;      // crisp dot
 
-  // shading pass: oversized soft blobs merge into filled landmasses, so the
-  // continents read as shapes — the crisp dots then sit on top as texture
-  const inkShade = portrait ? 'rgba(20, 18, 16, 0.04)' : 'rgba(20, 18, 16, 0.05)';
+  // shading pass: oversized soft blobs merge into a filled landmass, then
+  // crisp dots sit on top as texture
+  const inkShade = 'rgba(20, 18, 16, 0.05)';
   const ochreShade = 'rgba(201, 111, 46, 0.10)';
   for (let i = 0; i < LAND_DOTS.length; i += 2) {
     const lat = LAND_DOTS[i], lon = LAND_DOTS[i + 1];
-    if (portrait && lat < -50) continue;          // no Antarctica in the corridor
+    if (portrait && !inAustralia(lat, lon)) continue;   // radar = Australia only
     const [x, y] = project(lon, lat);
     if (y < -6 || y > H + 6 || x < -8 || x > W + 8) continue;
     g.fillStyle = inAustralia(lat, lon) ? ochreShade : inkShade;
-    g.fillRect(x - shW * 0.3, y - shH * 0.3, shW, shH);
+    g.fillRect(x - shS * 0.3, y - shS * 0.3, shS, shS);
   }
 
-  const ink = portrait ? 'rgba(20, 18, 16, 0.15)' : 'rgba(20, 18, 16, 0.20)';
+  const ink = 'rgba(20, 18, 16, 0.20)';
   const ochre = 'rgba(201, 111, 46, 0.55)';
   for (let i = 0; i < LAND_DOTS.length; i += 2) {
     const lat = LAND_DOTS[i], lon = LAND_DOTS[i + 1];
-    if (portrait && lat < -50) continue;
+    if (portrait && !inAustralia(lat, lon)) continue;
     const [x, y] = project(lon, lat);
     if (y < -4 || y > H + 4 || x < -4 || x > W + 4) continue;
     g.fillStyle = inAustralia(lat, lon) ? ochre : ink;
-    g.fillRect(x, y, dotW, dotH);
+    g.fillRect(x, y, dotS, dotS);
   }
 }
 
@@ -116,20 +127,22 @@ const arcs = ORIGINS.map((o, i) => ({
   from: o,
   to: DESTS[i % DESTS.length],
   offset: i / ORIGINS.length,
+  idx: i,
 }));
 
 function arcPoint(a, t) {
-  const [x1, y1] = project(a.from[0], a.from[1]);
+  // portrait: flights take off from their labelled edge anchor;
+  // landscape: from the origin city's place on the world map
+  const [x1, y1] = portrait ? anchors[a.idx] : project(a.from[0], a.from[1]);
   const [x2, y2] = project(a.to[0], a.to[1]);
   let mx = (x1 + x2) / 2;
   let my = (y1 + y2) / 2;
   const d = Math.hypot(x2 - x1, y2 - y1);
   if (portrait) {
-    // flights dive down the screen — bow each arc sideways (alternating)
-    // so they fan out instead of stacking on one line
-    const side = (a.offset * 8) % 2 < 1 ? 1 : -1;
-    mx += ((y2 - y1) / (d || 1)) * d * 0.18 * side;
-    my -= ((x2 - x1) / (d || 1)) * d * 0.18 * side;
+    // bow each arc sideways (alternating) so the fan reads as separate routes
+    const side = a.idx % 2 ? 1 : -1;
+    mx += ((y2 - y1) / (d || 1)) * d * 0.16 * side;
+    my -= ((x2 - x1) / (d || 1)) * d * 0.16 * side;
   } else {
     my -= d * 0.22;                                  // lift the midpoint
   }
@@ -162,13 +175,37 @@ function drawArc(a, grow, alpha) {
   }
 }
 
+// portrait: the origin's name + dot at the screen edge, fading with its flight
+function drawTag(a, alpha) {
+  const tag = TAGS[a.idx];
+  const [ax, ay] = anchors[a.idx];
+  ctx.beginPath();
+  ctx.arc(ax, ay, 2.4, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(20, 18, 16, ' + (0.5 * alpha).toFixed(3) + ')';
+  ctx.fill();
+  ctx.font = '600 9px Onest, system-ui, sans-serif';
+  ctx.fillStyle = 'rgba(56, 50, 43, ' + (0.78 * alpha).toFixed(3) + ')';
+  if (tag.align === 'right') {
+    ctx.textAlign = 'right';
+    ctx.fillText(tag.n, ax - 9, ay + 3);
+  } else if (tag.align === 'center') {
+    ctx.textAlign = 'center';
+    ctx.fillText(tag.n, ax, ay - 9);
+  } else {
+    ctx.textAlign = 'left';
+    ctx.fillText(tag.n, ax + 9, ay + 3);
+  }
+}
+
 function drawCities(t) {
-  for (const [lon, lat] of ORIGINS) {
-    const [x, y] = project(lon, lat);
-    ctx.beginPath();
-    ctx.arc(x, y, 2.4, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(20, 18, 16, 0.45)';
-    ctx.fill();
+  if (!portrait) {
+    for (const [lon, lat] of ORIGINS) {
+      const [x, y] = project(lon, lat);
+      ctx.beginPath();
+      ctx.arc(x, y, 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(20, 18, 16, 0.45)';
+      ctx.fill();
+    }
   }
   const dr = portrait ? 3.6 : 2.6, pulse = portrait ? 16 : 11;
   for (let i = 0; i < DESTS.length; i++) {
@@ -187,8 +224,30 @@ function drawCities(t) {
   }
 }
 
-// topographic layer: nested, gently-distorted rings around a few "peaks",
-// breathing very slowly — pure mood, sits beneath everything else
+// portrait: quiet radar rings breathing around Australia, with a slow
+// expanding "ping" — the approach pattern
+function drawRadar(t) {
+  const [cx, cy] = project(132.5, -25.5);
+  for (let i = 1; i <= 5; i++) {
+    const r = i * W * 0.155 * (1 + (reduced ? 0 : 0.015 * Math.sin(t * 0.5 + i)));
+    ctx.beginPath();
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(20, 18, 16, 0.045)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+  if (!reduced) {
+    const k = (t * 0.11) % 1;
+    ctx.beginPath();
+    ctx.arc(cx, cy, k * W * 0.95, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(201, 111, 46, ' + (0.16 * (1 - k)).toFixed(3) + ')';
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+  }
+}
+
+// topographic layer (landscape only): nested, gently-distorted rings around a
+// few "peaks", breathing very slowly — pure mood, beneath everything else
 const PEAKS = [
   { x: 0.78, y: 0.62, rings: 9, base: 0.05, wob: [3, 0.9], ochre: true },
   { x: 0.16, y: 0.28, rings: 7, base: 0.045, wob: [4, 1.3], ochre: false },
@@ -234,18 +293,22 @@ resize();
 
 function render(t) {
   ctx.clearRect(0, 0, W, H);
-  if (!portrait) drawContours(reduced ? 0 : t);   // phones: clean two-map story, less clutter + battery
+  if (portrait) drawRadar(t);
+  else drawContours(reduced ? 0 : t);
   ctx.drawImage(mapLayer, 0, 0, W, H);
   for (const a of arcs) {
     if (reduced) {
       drawArc(a, 1, 0.8);
+      if (portrait) drawTag(a, 0.8);
       continue;
     }
-    // each flight: grow across the world, hold on arrival, fade, go again
+    // each flight: grow across the screen, hold on arrival, fade, go again
     const cycle = (t * 0.055 + a.offset) % 1;
-    if (cycle < 0.62) drawArc(a, cycle / 0.62, 1);
-    else if (cycle < 0.82) drawArc(a, 1, 1);
-    else drawArc(a, 1, 1 - (cycle - 0.82) / 0.18);
+    let grow = 1, alpha = 1;
+    if (cycle < 0.62) grow = cycle / 0.62;
+    else if (cycle >= 0.82) alpha = 1 - (cycle - 0.82) / 0.18;
+    drawArc(a, grow, alpha);
+    if (portrait) drawTag(a, Math.min(1, alpha, grow * 4));
   }
   drawCities(t);
 }
