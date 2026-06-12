@@ -191,11 +191,23 @@ html.citypanel-lock { overflow: hidden; }
 }
 .flightpaths canvas { width: 100%; height: 100%; display: block; }
 
-/* the 3D domino cascade — phone hero background (js/dominoes.js) */
-.dominoes {
+/* the helix tower — phone hero background (js/helix.js) */
+.helix {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
 }
-.dominoes canvas { width: 100%; height: 100%; display: block; }
+.helix canvas {
+  width: 100%; height: 100%; display: block;
+  /* melt the sculpture away at the very top and bottom so the tagline and
+     CTA caption always sit on clean white */
+  /* …and a soft clearing where the wordmark floats, so the type always
+     sits in white space with the tower passing behind it */
+  -webkit-mask-image: linear-gradient(to bottom,
+    transparent 0, #000 14%, #000 38%, rgba(0,0,0,0.12) 46%,
+    rgba(0,0,0,0.12) 57%, #000 65%, #000 76%, transparent 95%);
+          mask-image: linear-gradient(to bottom,
+    transparent 0, #000 14%, #000 38%, rgba(0,0,0,0.12) 46%,
+    rgba(0,0,0,0.12) 57%, #000 65%, #000 76%, transparent 95%);
+}
 
 
 /* ============ header CTA — black puzzle piece + "Make your move" ============ */
