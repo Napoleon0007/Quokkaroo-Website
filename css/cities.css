@@ -191,24 +191,36 @@ html.citypanel-lock { overflow: hidden; }
 }
 .flightpaths canvas { width: 100%; height: 100%; display: block; }
 
-/* the helix tower — phone hero background (js/helix.js) */
-.helix {
-  position: fixed; inset: 0; z-index: 0; pointer-events: none;
+/* ============ hero centrepiece — the fit (white + black, joined by ochre) ============ */
+.hero__fit {
+  position: absolute; top: max(19%, 172px); left: 0; right: 0;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  pointer-events: none;
 }
-.helix canvas {
-  width: 100%; height: 100%; display: block;
-  /* melt the sculpture away at the very top and bottom so the tagline and
-     CTA caption always sit on clean white */
-  /* …and a soft clearing where the wordmark floats, so the type always
-     sits in white space with the tower passing behind it */
-  -webkit-mask-image: linear-gradient(to bottom,
-    transparent 0, #000 14%, #000 38%, rgba(0,0,0,0.12) 46%,
-    rgba(0,0,0,0.12) 57%, #000 65%, #000 76%, transparent 95%);
-          mask-image: linear-gradient(to bottom,
-    transparent 0, #000 14%, #000 38%, rgba(0,0,0,0.12) 46%,
-    rgba(0,0,0,0.12) 57%, #000 65%, #000 76%, transparent 95%);
-}
+@media (min-width: 681px) { .hero__fit { display: none; } }   /* phone hero only */
+.fitsvg { width: min(296px, 78vw); height: auto; overflow: visible; }
+.fitsvg g { transform-box: fill-box; transform-origin: center; }
+/* the two sides breathe apart… the orange piece holds them together */
+.fit__white { animation: fitApartL 7s ease-in-out infinite; }
+.fit__ink   { animation: fitApartR 7s ease-in-out infinite; }
+.fit__ochre { animation: fitHold 7s ease-in-out infinite; }
+@keyframes fitApartL { 0%, 55%, 100% { transform: translateX(0); } 25% { transform: translateX(-11px); } }
+@keyframes fitApartR { 0%, 55%, 100% { transform: translateX(0); } 25% { transform: translateX(11px); } }
+@keyframes fitHold   { 0%, 55%, 100% { transform: translateY(0); } 25% { transform: translateY(-7px); } 47% { transform: translateY(1.5px); } 51% { transform: translateY(0); } }
+@media (prefers-reduced-motion: reduce) { .fit__white, .fit__ink, .fit__ochre { animation: none; } }
 
+.hero__needs {
+  font-size: 12.5px; letter-spacing: 0.22em; text-transform: uppercase;
+  color: var(--ink-soft); font-weight: 600;
+}
+.hero__needs b {
+  display: inline-block; min-width: 110px; text-align: left;
+  font-family: var(--font-serif); font-style: italic; font-weight: 500;
+  font-size: 17px; letter-spacing: 0.02em; text-transform: none;
+  color: var(--ochre);
+  transition: opacity 0.28s ease, transform 0.28s ease;
+}
+.hero__needs b.is-flip { opacity: 0; transform: translateY(8px); }
 
 /* ============ header CTA — black puzzle piece + "Make your move" ============ */
 .hdrpuzzle {

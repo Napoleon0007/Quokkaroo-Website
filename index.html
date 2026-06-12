@@ -9,13 +9,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Onest:wght@300;400;500;600&family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,500&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=20260612g">
-  <link rel="stylesheet" href="css/cities.css?v=20260612g">
-  <link rel="stylesheet" href="css/calculator.css?v=20260612g">
-  <link rel="stylesheet" href="css/sectors-map.css?v=20260612g">
-  <link rel="stylesheet" href="css/extras.css?v=20260612g">
-  <link rel="stylesheet" href="css/overrides.css?v=20260612g">
-  <link rel="stylesheet" href="css/sectors-cards.css?v=20260612g">
+  <link rel="stylesheet" href="css/style.css?v=20260612h">
+  <link rel="stylesheet" href="css/cities.css?v=20260612h">
+  <link rel="stylesheet" href="css/calculator.css?v=20260612h">
+  <link rel="stylesheet" href="css/sectors-map.css?v=20260612h">
+  <link rel="stylesheet" href="css/extras.css?v=20260612h">
+  <link rel="stylesheet" href="css/overrides.css?v=20260612h">
+  <link rel="stylesheet" href="css/sectors-cards.css?v=20260612h">
 
   <!-- social sharing + search -->
   <link rel="canonical" href="https://www.quokkaroo.com/">
@@ -127,6 +127,49 @@
     <section class="hero" id="hero" data-stage="0">
       <div class="hero__inner">
         <p class="hero__tagline reveal">We make your Aussie<br>dreams a reality</p>
+        <div class="hero__fit reveal" aria-hidden="true">
+          <svg class="fitsvg" viewBox="14 12 312 102">
+            <defs>
+              <linearGradient id="fitWhite" x1="0" y1="0" x2="0.25" y2="1">
+                <stop offset="0" stop-color="#ffffff"/><stop offset="0.6" stop-color="#f4efe7"/><stop offset="1" stop-color="#e2dacc"/>
+              </linearGradient>
+              <linearGradient id="fitInk" x1="0" y1="0" x2="0.25" y2="1">
+                <stop offset="0" stop-color="#332c25"/><stop offset="0.5" stop-color="#16120e"/><stop offset="1" stop-color="#000000"/>
+              </linearGradient>
+              <linearGradient id="fitOchre" x1="0" y1="0" x2="0.25" y2="1">
+                <stop offset="0" stop-color="#E08A47"/><stop offset="0.55" stop-color="#C96F2E"/><stop offset="1" stop-color="#9C5018"/>
+              </linearGradient>
+              <linearGradient id="fitGloss" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0" stop-color="#fff" stop-opacity="0.42"/><stop offset="0.45" stop-color="#fff" stop-opacity="0.06"/><stop offset="0.55" stop-color="#fff" stop-opacity="0"/>
+              </linearGradient>
+              <filter id="fitBevel" x="-25%" y="-25%" width="150%" height="150%">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="2.6" result="bl"/>
+                <feSpecularLighting in="bl" surfaceScale="3.6" specularConstant="0.4" specularExponent="22" lighting-color="#ffffff" result="sp"><fePointLight x="-30" y="-50" z="130"/></feSpecularLighting>
+                <feComposite in="sp" in2="SourceAlpha" operator="in" result="spc"/>
+                <feComposite in="SourceGraphic" in2="spc" operator="arithmetic" k1="0" k2="1" k3="0.9" k4="0"/>
+              </filter>
+              <filter id="fitShadow" x="-30%" y="-30%" width="160%" height="190%">
+                <feDropShadow dx="0" dy="7" stdDeviation="6" flood-color="#141210" flood-opacity="0.32"/>
+              </filter>
+              <path id="fitL" d="M25,25 H95 V50 C95,42 112,42 112,60 C112,78 95,70 95,70 V95 H25 Z"/>
+              <path id="fitM" d="M115,25 H185 V50 C185,42 202,42 202,60 C202,78 185,70 185,70 V95 H115 V70 C115,78 132,78 132,60 C132,42 115,50 115,50 Z"/>
+              <path id="fitR" d="M205,25 H295 V95 H205 V70 C205,78 222,78 222,60 C222,42 205,50 205,50 Z"/>
+            </defs>
+            <g class="fit__white">
+              <use href="#fitL" fill="#cdc4b4" transform="translate(0,6)"/>
+              <use href="#fitL" fill="url(#fitWhite)" filter="url(#fitBevel) url(#fitShadow)" stroke="rgba(20,18,16,0.14)" stroke-width="1"/>
+            </g>
+            <g class="fit__ink">
+              <use href="#fitR" fill="#050403" transform="translate(0,6)"/>
+              <use href="#fitR" fill="url(#fitInk)" filter="url(#fitBevel) url(#fitShadow)"/>
+            </g>
+            <g class="fit__ochre">
+              <use href="#fitM" fill="#7a3c0f" transform="translate(0,6)"/>
+              <use href="#fitM" fill="url(#fitOchre)" filter="url(#fitBevel) url(#fitShadow)"/>
+            </g>
+          </svg>
+          <p class="hero__needs">Australia needs <b id="needsWord">nurses</b></p>
+        </div>
         <h1 class="hero__word" aria-label="Quokka-roo — Recruitment and Immigration">
           <span class="hero__word-main">
             <span style="--i:0">Q</span><span style="--i:1">u</span><span style="--i:2">o</span><span style="--i:3">k</span><span style="--i:4">k</span><span style="--i:5">a</span><span class="hero__dash" style="--i:6">-</span><span style="--i:7">r</span><span style="--i:8">o</span><span style="--i:9">o</span>
@@ -416,16 +459,16 @@
   <script type="importmap">
     { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
   </script>
-  <script type="module" src="js/scene.js?v=20260612g"></script>
-  <script type="module" src="js/globe.js?v=20260612g"></script>
-  <script type="module" src="js/quokkabot.js?v=20260612g"></script>
-  <script type="module" src="js/calculator.js?v=20260612g"></script>
-  <script type="module" src="js/flightpaths.js?v=20260612g"></script>
-  <script type="module" src="js/helix.js?v=20260612g"></script>
-  <script src="js/sectors-map.js?v=20260612g" defer></script>
-  <script src="js/sectors-cards.js?v=20260612g" defer></script>
-  <script src="js/occupations.js?v=20260612g" defer></script>
-  <script type="module" src="js/extras.js?v=20260612g"></script>
-  <script src="js/main.js?v=20260612g" defer></script>
+  <script type="module" src="js/scene.js?v=20260612h"></script>
+  <script type="module" src="js/globe.js?v=20260612h"></script>
+  <script type="module" src="js/quokkabot.js?v=20260612h"></script>
+  <script type="module" src="js/calculator.js?v=20260612h"></script>
+  <script type="module" src="js/flightpaths.js?v=20260612h"></script>
+  <script src="js/sectors-map.js?v=20260612h" defer></script>
+  <script src="js/sectors-cards.js?v=20260612h" defer></script>
+  <script src="js/occupations.js?v=20260612h" defer></script>
+  <script type="module" src="js/extras.js?v=20260612h"></script>
+  <script src="js/kinetic.js?v=20260612h" defer></script>
+  <script src="js/main.js?v=20260612h" defer></script>
 </body>
 </html>
