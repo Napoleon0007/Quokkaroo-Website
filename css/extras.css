@@ -199,12 +199,12 @@ html.has-fxbar .header { top: 30px; }
 /* --- demand ticker --- */
 .occx__tickerwrap {
   display: flex; align-items: center; gap: 0;
-  margin: 0 0 64px; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-  background: var(--cream); overflow: hidden;
+  margin: 0 0 64px;
+  background: var(--ink); overflow: hidden;
 }
 .occx__ticklabel {
   flex: 0 0 auto; padding: 12px 22px;
-  background: var(--ink); color: var(--cream);
+  background: var(--ochre); color: #FFFFFF;
   font-size: 11px; letter-spacing: 0.22em; text-transform: uppercase; font-weight: 500;
 }
 .occx__tickwin { flex: 1; overflow: hidden; }
@@ -214,9 +214,9 @@ html.has-fxbar .header { top: 30px; }
 }
 .occx__tickerwrap:hover .occx__tickrun { animation-play-state: paused; }
 @keyframes occxTick { from { transform: translateX(0); } to { transform: translateX(-50%); } }
-.occx__tick { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-soft); }
-.occx__tick b { color: var(--ochre); font-weight: 600; }
-.occx__tick.is-severe b { color: #b6471f; }
+.occx__tick { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: rgba(255, 255, 255, 0.78); }
+.occx__tick b { color: #FFA75E; font-weight: 600; }
+.occx__tick.is-severe b { color: #FF8C3A; }
 .occx__tickdot { color: rgba(20, 18, 16, 0.25); margin: 0 26px 0 0; }
 @media (prefers-reduced-motion: reduce) { .occx__tickrun { animation: none; } }
 

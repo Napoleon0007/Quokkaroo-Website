@@ -191,11 +191,11 @@ html.citypanel-lock { overflow: hidden; }
 }
 .flightpaths canvas { width: 100%; height: 100%; display: block; }
 
-/* the 3D tumbling boomerang — phone hero background (js/boomerang.js) */
-.boomerang {
+/* the 3D domino cascade — phone hero background (js/dominoes.js) */
+.dominoes {
   position: fixed; inset: 0; z-index: 0; pointer-events: none;
 }
-.boomerang canvas { width: 100%; height: 100%; display: block; }
+.dominoes canvas { width: 100%; height: 100%; display: block; }
 
 
 /* ============ header CTA — black puzzle piece + "Make your move" ============ */

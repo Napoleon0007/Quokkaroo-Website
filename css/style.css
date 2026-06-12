@@ -1,6 +1,6 @@
 /* ============ Quokkaroo — design system ============ */
 :root {
-  --cream: #FFF6EC;
+  --cream: #FFFFFF;   /* strict white/black/orange scheme */
   --paper: #FFFFFF;
   --ink: #141210;
   --ink-soft: #38322B;
@@ -139,11 +139,22 @@ a { color: inherit; }
 /* ============ sections / typography ============ */
 main { position: relative; z-index: 1; }
 .section { position: relative; padding: 96px 0; }
-@media (max-width: 680px) { .section { padding: 68px 0; } }
+@media (max-width: 680px) { .section { padding: 76px 0 64px; } }
+/* tactile press feedback on touch */
+@media (hover: none) {
+  .btn:active, .occx__card:active, .gallery__row figure:active,
+  .ctabar a:active, .jig:active, .pc-fab:active { transform: scale(0.97); transition: transform 0.12s; }
+}
 .kicker {
   font-size: 12px; letter-spacing: 0.28em; text-transform: uppercase;
   color: var(--ochre); margin-bottom: 26px; font-weight: 500;
 }
+.kicker::after {
+  content: ""; display: block; width: 34px; height: 2px;
+  background: var(--ochre); margin-top: 10px;
+}
+/* centred sections get a centred rule */
+[style*="text-align: center"] .kicker::after, .occ .kicker::after { margin-inline: auto; }
 .kicker--light { color: var(--ochre); }
 .h2 {
   font-family: var(--font-serif); font-weight: 400;
@@ -157,8 +168,8 @@ main { position: relative; z-index: 1; }
 
 /* reveal animation */
 .reveal {
-  opacity: 0; transform: translateY(36px);
-  transition: opacity 0.9s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.9s cubic-bezier(0.2, 0.6, 0.2, 1);
+  opacity: 0; transform: translateY(16px);
+  transition: opacity 0.6s cubic-bezier(0.2, 0.6, 0.2, 1), transform 0.6s cubic-bezier(0.2, 0.6, 0.2, 1);
 }
 .reveal.is-in { opacity: 1; transform: none; }
 
@@ -365,6 +376,12 @@ main { position: relative; z-index: 1; }
   width: clamp(240px, 26vw, 420px); aspect-ratio: 4 / 3;
   border-radius: 16px; overflow: hidden;
 }
+@media (max-width: 680px) {
+  /* phones: a calm 2-up grid (the drifting rows fought the small screen) */
+  .gallery__row { flex-wrap: wrap; gap: 12px; padding: 0 20px; transform: none !important; }
+  .gallery__row figure { width: calc(50% - 6px); }
+  .gallery__rows .gallery__row:first-child figure:first-child { width: 100%; aspect-ratio: 16 / 9; }
+}
 .gallery__row img {
   width: 100%; height: 100%; object-fit: cover;
   transform: scale(1.06); transition: transform 0.8s ease;
@@ -527,11 +544,8 @@ main { position: relative; z-index: 1; }
 
 /* ============ trust band ============ */
 .trust {
-  /* the brand ochre, as a confident full-bleed band */
-  background: linear-gradient(100deg, #D97C39 0%, #C96F2E 45%, #B05E22 100%);
-  border-top: 1px solid rgba(20, 18, 16, 0.18);
-  border-bottom: 1px solid rgba(20, 18, 16, 0.22);
-  box-shadow: inset 0 1px 0 rgba(255, 235, 215, 0.25), inset 0 -10px 24px rgba(0, 0, 0, 0.12);
+  /* flat black band — white text, orange ticks (strict 3-colour scheme) */
+  background: var(--ink);
 }
 .trust__row {
   display: flex; flex-wrap: wrap; justify-content: center; gap: 14px 40px;
@@ -539,12 +553,12 @@ main { position: relative; z-index: 1; }
 }
 .trust__item {
   position: relative; font-size: 12px; letter-spacing: 0.14em;
-  text-transform: uppercase; color: #FFF3E7; padding-left: 22px;
+  text-transform: uppercase; color: #FFFFFF; padding-left: 22px;
 }
 .trust__item::before {
   content: ""; position: absolute; left: 0; top: 50%; width: 12px; height: 12px;
   margin-top: -6px;
-  background: #FFF6EC;
+  background: var(--ochre);
   -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/contain no-repeat;
           mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath fill='black' d='M9 16.2 4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z'/%3E%3C/svg%3E") center/contain no-repeat;
 }
