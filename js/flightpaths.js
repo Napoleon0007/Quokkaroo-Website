@@ -292,9 +292,15 @@ window.addEventListener('resize', resize);
 resize();
 
 function render(t) {
+  // phones get the 3D boomerang hero (js/boomerang.js) — this layer is
+  // desktop/landscape only now
+  if (portrait) {
+    wrap.style.display = 'none';
+    return;
+  }
+  wrap.style.display = '';
   ctx.clearRect(0, 0, W, H);
-  if (portrait) drawRadar(t);
-  else drawContours(reduced ? 0 : t);
+  drawContours(reduced ? 0 : t);
   ctx.drawImage(mapLayer, 0, 0, W, H);
   for (const a of arcs) {
     if (reduced) {
